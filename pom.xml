@@ -73,4 +73,12 @@
         </plugins>
     </build>
 
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub nsftx Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/nsftx/nsoft-resource-server-java</url>
+        </repository>
+    </distributionManagement>
+
 </project>
