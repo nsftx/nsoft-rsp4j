@@ -4,8 +4,6 @@ NSoft Security API is a Resource Server protection solution designed to work wit
 
 ## Installation
 
-NSoft Security API uses GitHub's package registry as a deployment solution. 
-
 #### Maven
 
 If your project is using Maven, please follow this [guide](https://help.github.com/en/articles/configuring-apache-maven-for-use-with-github-package-registry#installing-a-package).
@@ -14,8 +12,8 @@ If your project is using Maven, please follow this [guide](https://help.github.c
 
 If your project is using Gradle, please follow the steps below:
 
-1. Create a `gradle.properties` file in ~/.gradle/ and add the following properties:
-```
+1. Create a `gradle.properties` file in `~/.gradle/` and add the following properties:
+```properties
 mavenUser=GITHUB_USERNAME
 mavenPassword=PERSONAL_ACCESS_TOKEN
 ```
@@ -23,7 +21,7 @@ mavenPassword=PERSONAL_ACCESS_TOKEN
 To generate a personal access token, visit https://github.com/settings/tokens and create a new token with read privilages.
 
 2. Add Maven repository
-```
+```groovy
 repositories {
     maven {
         credentials {
@@ -36,7 +34,7 @@ repositories {
 ```
 
 3. Pull dependencies
-```
+```groovy
 dependencies {
     ...
     compile("com.nsoft.security.api:security-spring-filter:1.0.0")
