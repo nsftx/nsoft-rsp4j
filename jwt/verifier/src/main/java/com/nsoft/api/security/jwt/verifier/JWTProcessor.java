@@ -1,6 +1,5 @@
 package com.nsoft.api.security.jwt.verifier;
 
-import com.nimbusds.jwt.JWTClaimsSet;
 import com.nsoft.api.security.jwt.verifier.exception.ProcessorInstantiationException;
 import com.nsoft.api.security.jwt.verifier.internal.DefaultJWTProcessorConfiguration;
 import com.nsoft.api.security.jwt.verifier.internal.DefaultJWTProcessor;

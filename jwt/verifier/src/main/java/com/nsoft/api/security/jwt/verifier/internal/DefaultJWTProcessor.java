@@ -7,10 +7,10 @@ import com.nimbusds.jose.proc.BadJOSEException;
 import com.nimbusds.jose.proc.JWSKeySelector;
 import com.nimbusds.jose.proc.JWSVerificationKeySelector;
 import com.nimbusds.jose.proc.SecurityContext;
-import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.proc.BadJWTException;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
+import com.nsoft.api.security.jwt.verifier.JWTClaimsSet;
 import com.nsoft.api.security.jwt.verifier.JWTProcessor;
 import com.nsoft.api.security.jwt.verifier.JWTProcessorConfiguration;
 
@@ -39,7 +39,7 @@ public class DefaultJWTProcessor implements JWTProcessor {
     @Override
     public Optional<JWTClaimsSet> process(String token) {
         try {
-            return Optional.of(processor.process(token, null));
+            return Optional.of(new ImmutableJWTClaimsSet(processor.process(token, null)));
         } catch (ParseException | JOSEException | BadJOSEException e) {
             return Optional.empty();
         }
@@ -55,7 +55,7 @@ public class DefaultJWTProcessor implements JWTProcessor {
         }
 
         @Override
-        public void verify(JWTClaimsSet claimsSet) throws BadJWTException {
+        public void verify(com.nimbusds.jwt.JWTClaimsSet claimsSet) throws BadJWTException {
             super.verify(claimsSet);
 
             if (!claimsSet.getIssuer().equals(configuration.getIssuer())) {

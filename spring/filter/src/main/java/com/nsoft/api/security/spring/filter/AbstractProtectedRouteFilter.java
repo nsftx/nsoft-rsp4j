@@ -1,6 +1,6 @@
 package com.nsoft.api.security.spring.filter;
 
-import com.nimbusds.jwt.JWTClaimsSet;
+import com.nsoft.api.security.jwt.verifier.JWTClaimsSet;
 import com.nsoft.api.security.jwt.verifier.JWTProcessor;
 import com.nsoft.api.security.spring.filter.error.ErrorHandler;
 import com.nsoft.api.security.spring.filter.route.ProtectedRouteHandler;
