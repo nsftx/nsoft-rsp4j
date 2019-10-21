@@ -37,7 +37,7 @@ repositories {
 ```groovy
 dependencies {
     ...
-    compile("com.nsoft.security.api:security-spring-filter:1.0.0")
+    compile("com.nsoft.security.api:security-spring-filter:1.1.0")
     ...
 }
 ```
