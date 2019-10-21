@@ -1,11 +1,12 @@
 package com.nsoft.api.security.jwt.verifier;
 
 import com.nsoft.api.security.jwt.verifier.exception.ProcessorInstantiationException;
-import com.nsoft.api.security.jwt.verifier.internal.DefaultJWTProcessorConfiguration;
 import com.nsoft.api.security.jwt.verifier.internal.DefaultJWTProcessor;
+import com.nsoft.api.security.jwt.verifier.internal.DefaultJWTProcessorConfiguration;
 
 import java.net.MalformedURLException;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * A JSON Web Token processor abstraction used to process and verify OAuth2 access tokens.
@@ -31,6 +32,18 @@ public interface JWTProcessor {
      * @return {@link JWTClaimsSet} if token is verified successfully
      */
     Optional<JWTClaimsSet> process(String token);
+
+    /**
+     * Processes and verifies an OAuth2 access token. If the verification is successful, an {@link
+     * Optional<JWTClaimsSet>} will be returned. Otherwise, an empty {@link Optional} will be
+     * returned.
+     *
+     * @param tokenSupplier OAuth2 access token supplier
+     * @return {@link JWTClaimsSet} if token is verified successfully
+     */
+    default Optional<JWTClaimsSet> process(Supplier<String> tokenSupplier) {
+        return process(tokenSupplier.get());
+    }
 
     /**
      * Returns a configuration that should be used by {@link JWTProcessor} implementors during
