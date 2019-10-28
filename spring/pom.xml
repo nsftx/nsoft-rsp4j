@@ -27,6 +27,7 @@
 
     <modules>
         <module>filter</module>
+        <module>resolver</module>
     </modules>
 
 </project>
