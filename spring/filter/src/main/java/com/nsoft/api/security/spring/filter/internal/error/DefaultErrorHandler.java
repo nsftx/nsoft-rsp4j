@@ -1,4 +1,4 @@
-package com.nsoft.api.security.spring.filter.error.internal;
+package com.nsoft.api.security.spring.filter.internal.error;
 
 import com.nsoft.api.security.spring.filter.error.ErrorHandler;
 import com.nsoft.chiwava.core.commons.json.JsonMapper;

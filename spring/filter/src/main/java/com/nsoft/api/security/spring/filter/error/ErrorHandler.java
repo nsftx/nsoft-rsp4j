@@ -1,7 +1,7 @@
 package com.nsoft.api.security.spring.filter.error;
 
-import com.nsoft.api.security.spring.filter.error.internal.DefaultErrorHandler;
-import com.nsoft.api.security.spring.filter.error.internal.FallbackErrorHandler;
+import com.nsoft.api.security.spring.filter.internal.error.DefaultErrorHandler;
+import com.nsoft.api.security.spring.filter.internal.error.FallbackErrorHandler;
 
 import javax.servlet.http.HttpServletResponse;
 

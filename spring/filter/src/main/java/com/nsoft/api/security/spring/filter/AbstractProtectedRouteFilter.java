@@ -3,9 +3,9 @@ package com.nsoft.api.security.spring.filter;
 import com.nsoft.api.security.jwt.verifier.JWTClaimsSet;
 import com.nsoft.api.security.jwt.verifier.JWTProcessor;
 import com.nsoft.api.security.spring.filter.error.ErrorHandler;
+import com.nsoft.api.security.spring.filter.internal.util.HeaderUtil;
 import com.nsoft.api.security.spring.filter.route.ProtectedRouteHandler;
 import com.nsoft.api.security.spring.filter.route.ProtectedRouteRegistry;
-import com.nsoft.api.security.spring.filter.util.HeaderUtil;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
