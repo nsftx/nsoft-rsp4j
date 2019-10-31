@@ -2,7 +2,7 @@ package com.nsoft.api.security.spring.filter.route;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class ProtectedRouteHandler {
+public final class ProtectedRouteHandler {
 
     private final ProtectedRouteRegistry protectedRouteRegistry;
 
