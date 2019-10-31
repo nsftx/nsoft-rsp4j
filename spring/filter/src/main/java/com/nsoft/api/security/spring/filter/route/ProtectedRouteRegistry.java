@@ -3,6 +3,7 @@ package com.nsoft.api.security.spring.filter.route;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -42,7 +43,9 @@ public final class ProtectedRouteRegistry {
      * @param route to register, must not be null
      * @return current {@link ProtectedRouteRegistry} instance
      */
-    public ProtectedRouteRegistry registerRoute(String route) {
+    public ProtectedRouteRegistry registerRoute(final String route) {
+        Objects.requireNonNull(route);
+
         protectedRoutes.add(new AntPathRequestMatcher(route));
         return this;
     }
@@ -57,7 +60,10 @@ public final class ProtectedRouteRegistry {
      * @param method delimiter, must be a valid HTTP request method (https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods)
      * @return current {@link ProtectedRouteRegistry} instance
      */
-    public ProtectedRouteRegistry registerRoute(String route, String method) {
+    public ProtectedRouteRegistry registerRoute(final String route, final String method) {
+        Objects.requireNonNull(route);
+        Objects.requireNonNull(method);
+
         protectedRoutes.add(new AntPathRequestMatcher(route, method));
         return this;
     }
