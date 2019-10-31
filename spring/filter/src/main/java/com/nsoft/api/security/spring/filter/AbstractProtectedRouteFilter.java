@@ -1,9 +1,7 @@
 package com.nsoft.api.security.spring.filter;
 
-import com.nsoft.api.security.jwt.verifier.JWTClaimsSet;
 import com.nsoft.api.security.jwt.verifier.JWTProcessor;
 import com.nsoft.api.security.spring.filter.error.ErrorHandler;
-import com.nsoft.api.security.spring.filter.internal.util.HeaderUtil;
 import com.nsoft.api.security.spring.filter.route.ProtectedRouteHandler;
 import com.nsoft.api.security.spring.filter.route.ProtectedRouteRegistry;
 import org.springframework.web.filter.GenericFilterBean;
@@ -15,8 +13,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * A {@link javax.servlet.Filter} abstraction used to limit interaction with specified REST routes.
@@ -48,9 +45,6 @@ public abstract class AbstractProtectedRouteFilter extends GenericFilterBean {
     private final ProtectedRouteRegistry protectedRouteRegistry = new ProtectedRouteRegistry();
     private ProtectedRouteHandler protectedRouteHandler;
 
-    private ErrorHandler errorHandler = ErrorHandler.getDefault();
-    private JWTProcessor jwtProcessor = JWTProcessor.getDefault();
-
     /**
      * The implementor is expected to register the routes they wish to protect inside this method.
      * <p>
@@ -59,32 +53,46 @@ public abstract class AbstractProtectedRouteFilter extends GenericFilterBean {
      *
      * @param registry used to register protected routes
      */
-    public abstract void registerProtectedRoutes(ProtectedRouteRegistry registry);
-
-    /**
-     * Sets the {@link ErrorHandler} instance that should be used when handling errors such as
-     * invalid token processing.
-     * <p>
-     * If {@code null} is passed as a parameter, a fallback instance ({@link
-     * ErrorHandler#getFallback()}) is used.
-     *
-     * @param errorHandler to use when handling errors such as invalid token processing
-     */
-    public void setErrorHandler(ErrorHandler errorHandler) {
-        this.errorHandler = Objects.requireNonNullElseGet(errorHandler, ErrorHandler::getFallback);
-    }
+    public abstract void registerProtectedRoutes(final ProtectedRouteRegistry registry);
 
     /**
      * Sets the {@link JWTProcessor} instance that should be used when processing incoming Bearer
      * tokens.
-     * <p>
-     * If {@code null} is passed as a parameter, the default Chameleon Accounts specific
-     * implementation is used.
      *
      * @param jwtProcessor to use when processing incoming Bearer tokens
      */
-    public void setJWTProcessor(JWTProcessor jwtProcessor) {
-        this.jwtProcessor = Objects.requireNonNullElseGet(jwtProcessor, JWTProcessor::getDefault);
+    public void setJWTProcessor(final JWTProcessor jwtProcessor) {
+        protectedRouteHandler.setJWTProcessor(jwtProcessor);
+    }
+
+    /**
+     * Sets the {@link JWTProcessor} instance provided through a {@link Supplier} that should be
+     * used when processing incoming Bearer tokens.
+     *
+     * @param jwtProcessorSupplier used to retrieve the {@link JWTProcessor} instance
+     */
+    public void setJWTProcessor(final Supplier<JWTProcessor> jwtProcessorSupplier) {
+        protectedRouteHandler.setJWTProcessor(jwtProcessorSupplier);
+    }
+
+    /**
+     * Sets the {@link ErrorHandler} instance that should be used when handling errors that occur
+     * during Bearer token processing.
+     *
+     * @param errorHandler to use when handling errors such as invalid token processing
+     */
+    public void setErrorHandler(final ErrorHandler errorHandler) {
+        protectedRouteHandler.setErrorHandler(errorHandler);
+    }
+
+    /**
+     * Sets the {@link ErrorHandler} instance provided through a {@link Supplier} that should be
+     * used when handling errors that occur during Bearer token processing.
+     *
+     * @param errorHandlerSupplier used to retrieve the {@link ErrorHandler} instance
+     */
+    public void setErrorHandler(final Supplier<ErrorHandler> errorHandlerSupplier) {
+        protectedRouteHandler.setErrorHandler(errorHandlerSupplier);
     }
 
     @Override
@@ -98,31 +106,17 @@ public abstract class AbstractProtectedRouteFilter extends GenericFilterBean {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
             FilterChain filterChain) throws IOException, ServletException {
 
-        HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-        HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
+        final HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
+        final HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
 
         if (!protectedRouteHandler.requestNeedsAuthorization(httpServletRequest)) {
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }
 
-        Optional<String> optionalBearerToken = HeaderUtil.extractBearerToken(httpServletRequest);
-
-        if (optionalBearerToken.isEmpty()) {
-            errorHandler.handleInvalidBearerTokenError(httpServletResponse);
-            return;
+        if (protectedRouteHandler.handleBearerToken(httpServletRequest, httpServletResponse)) {
+            filterChain.doFilter(servletRequest, httpServletResponse);
         }
-
-        String bearerToken = optionalBearerToken.get();
-
-        Optional<JWTClaimsSet> optionalClaims = jwtProcessor.process(bearerToken);
-
-        if (optionalClaims.isEmpty()) {
-            errorHandler.handleJWTProcessingError(httpServletResponse);
-            return;
-        }
-
-        filterChain.doFilter(servletRequest, servletResponse);
     }
 
 }
