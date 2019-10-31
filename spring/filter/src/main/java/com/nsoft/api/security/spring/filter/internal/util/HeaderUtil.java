@@ -1,4 +1,4 @@
-package com.nsoft.api.security.spring.filter.util;
+package com.nsoft.api.security.spring.filter.internal.util;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
