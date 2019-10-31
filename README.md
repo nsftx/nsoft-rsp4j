@@ -37,13 +37,15 @@ repositories {
 ```groovy
 dependencies {
     ...
-    compile("com.nsoft.security.api:security-spring-filter:1.1.0")
+    compile("com.nsoft.security.api:security-spring-filter:1.2.0")
+    compile("com.nsoft.security.api:security-spring-resolver:1.2.0")
     ...
 }
 ```
 
 ## Usage
 
+##### Filter
 ```java
 package com.nsoft.api.security.example;
 
@@ -61,3 +63,25 @@ public class HttpRequestFilter extends AbstractProtectedRouteFilter {
     }
 }
 ```
+
+##### Resolver
+```java
+package com.nsoft.api.security.example;
+
+import com.nsoft.api.security.spring.resolver.JWTClaimsSetArgumentResolver;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+
+import java.util.List;
+
+@Configuration
+public class SpringAppConfig extends WebMvcConfigurationSupport {
+
+    @Override
+    protected void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        argumentResolvers.add(new JWTClaimsSetArgumentResolver());
+    }
+}
+```
+
