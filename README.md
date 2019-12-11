@@ -10,7 +10,7 @@ If your project is using Maven, please follow this [guide](https://help.github.c
 
 #### Gradle
 
-If your project is using Gradle, please follow this [guide](https://help.github.com/en/github/managing-packages-with-github-packages/configuring-gradle-for-use-with-github-packages):
+If your project is using Gradle, please follow this [guide](https://help.github.com/en/github/managing-packages-with-github-packages/configuring-gradle-for-use-with-github-packages).
 
 ## Installation
 
