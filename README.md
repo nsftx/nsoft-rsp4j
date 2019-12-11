@@ -34,6 +34,8 @@ If your project is using Gradle, please follow this [guide](https://help.github.
 <dependencies>
 ```
 
+#### Gradle
+
 ```groovy
 dependencies {
     ...
