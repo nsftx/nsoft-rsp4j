@@ -2,43 +2,44 @@
 
 NSoft Security API is a Resource Server protection solution designed to work with **Chameleon Identity Management** (CIM) out-of-the-box.
 
+## Repository installation
+
+#### Maven
+
+If your project is using Maven, please follow this [guide](https://help.github.com/en/github/managing-packages-with-github-packages/configuring-apache-maven-for-use-with-github-packages).
+
+#### Gradle
+
+If your project is using Gradle, please follow this [guide](https://help.github.com/en/github/managing-packages-with-github-packages/configuring-gradle-for-use-with-github-packages):
+
 ## Installation
 
 #### Maven
 
-If your project is using Maven, please follow this [guide](https://help.github.com/en/articles/configuring-apache-maven-for-use-with-github-package-registry#installing-a-package).
-
-#### Gradle
-
-If your project is using Gradle, please follow the steps below:
-
-1. Create a `gradle.properties` file in `~/.gradle/` and add the following properties:
-```properties
-mavenUser=GITHUB_USERNAME
-mavenPassword=PERSONAL_ACCESS_TOKEN
+```xml
+<dependencies>
+    ...
+    <dependency>
+      <groupId>com.nsoft.api.security</groupId>
+      <artifactId>security-jwt-verifier</artifactId>
+      <version>1.2.0</version>
+    </dependency>
+    ...
+    <dependency>
+      <groupId>com.nsoft.api.security</groupId>
+      <artifactId>security-spring-resolver</artifactId>
+      <version>1.2.0</version>
+    </dependency>
+    ...
+<dependencies>
 ```
 
-To generate a personal access token, visit https://github.com/settings/tokens and create a new token with read privilages.
-
-2. Add Maven repository
-```groovy
-repositories {
-    maven {
-        credentials {
-            username "$mavenUser"
-            password "$mavenPassword"
-        }
-        url 'https://maven.pkg.github.com/nsftx/nsoft-resource-server-java'
-    }
-}
-```
-
-3. Pull dependencies
 ```groovy
 dependencies {
     ...
-    compile("com.nsoft.security.api:security-spring-filter:1.2.0")
-    compile("com.nsoft.security.api:security-spring-resolver:1.2.0")
+    implementation "com.nsoft.security.api:security-spring-filter:1.2.0"
+    ...
+    implementation "com.nsoft.security.api:security-spring-resolver:1.2.0"
     ...
 }
 ```
