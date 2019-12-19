@@ -31,9 +31,12 @@ import java.util.Set;
  * @author Mislav Milicevic
  * @see #registerRoute(String)
  * @see #registerRoute(String, String)
+ * @see #enableAutomaticTrailCompensation(boolean)
  * @since 2019-10-01
  */
 public final class ProtectedRouteRegistry {
+
+    private boolean automaticTrail = true;
 
     final Set<AntPathRequestMatcher> protectedRoutes = new HashSet<>();
 
@@ -47,6 +50,11 @@ public final class ProtectedRouteRegistry {
         Objects.requireNonNull(route);
 
         protectedRoutes.add(new AntPathRequestMatcher(route));
+
+        if (automaticTrail) {
+            protectedRoutes.add(new AntPathRequestMatcher(createCompensatoryRoute(route)));
+        }
+
         return this;
     }
 
@@ -65,6 +73,42 @@ public final class ProtectedRouteRegistry {
         Objects.requireNonNull(method);
 
         protectedRoutes.add(new AntPathRequestMatcher(route, method));
+
+        if (automaticTrail) {
+            protectedRoutes.add(new AntPathRequestMatcher(createCompensatoryRoute(route), method));
+        }
         return this;
+    }
+
+    /**
+     * When configuring a WebMvc application, if {@code PathMatchConfigurer#setUserTrailingSlashMatch}
+     * is enabled (enabled by default), incoming request are able to bypass the Auth filter by
+     * adding a trailing slash.
+     * <p>
+     * We want {@code /route} and {@code /route/} to produce same results when interacted upon with
+     * the same REST verb. This situation leads to users registering their routes two times (with
+     * and without trailing slash)
+     * <p>
+     * When {@code enableAutomaticTrailCompensation} is enabled, all registered routes will
+     * automatically receive a compensatory route to handle this scenario.
+     * <p>
+     * Automatic trail compensation is enabled by default.
+     *
+     * @param automaticTrail enable/disable trail compensation
+     */
+    public void enableAutomaticTrailCompensation(boolean automaticTrail) {
+        this.automaticTrail = automaticTrail;
+    }
+
+    private String createCompensatoryRoute(String route) {
+        Objects.requireNonNull(route);
+
+        if (route.endsWith("/")) {
+            route = route.substring(0, route.length() - 1);
+        } else {
+            route = route + "/";
+        }
+
+        return route;
     }
 }
