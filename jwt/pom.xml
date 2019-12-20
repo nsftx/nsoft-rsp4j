@@ -15,7 +15,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <nimbus.version>7.8</nimbus.version>
+        <nimbus.version>8.3</nimbus.version>
     </properties>
 
     <modules>
