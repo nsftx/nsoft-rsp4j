@@ -15,11 +15,11 @@
     <packaging>pom</packaging>
 
     <properties>
-        <spring.web.version>5.1.10.RELEASE</spring.web.version>
-        <spring.context.version>5.1.10.RELEASE</spring.context.version>
-        <spring.web.security.version>5.1.6.RELEASE</spring.web.security.version>
+        <spring.web.version>5.2.2.RELEASE</spring.web.version>
+        <spring.context.version>5.2.2.RELEASE</spring.context.version>
+        <spring.web.security.version>5.2.1.RELEASE</spring.web.security.version>
         <javax.servlet.version>4.0.1</javax.servlet.version>
-        <zalando.version>0.25.0</zalando.version>
+        <zalando.version>0.25.2</zalando.version>
         <chiwava.commons.version>1.2.0</chiwava.commons.version>
         <chiwava.error.version>1.2.0</chiwava.error.version>
         <jwt.verifier.version>1.2.0</jwt.verifier.version>
