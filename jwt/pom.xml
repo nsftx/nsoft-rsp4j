@@ -14,6 +14,8 @@
     <version>1.3.0</version>
     <packaging>pom</packaging>
 
+    <name>NSoft Security API - JWT</name>
+
     <properties>
         <nimbus.version>8.3</nimbus.version>
     </properties>
