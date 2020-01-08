@@ -1,13 +1,15 @@
 package com.nsoft.api.security.spring.filter.route;
 
+import static com.nsoft.api.security.spring.filter.internal.compatibility.j9.Objects.requireNonNullElseGet;
+import static com.nsoft.api.security.spring.filter.internal.util.HeaderUtil.extractBearerToken;
+import static java.util.Objects.requireNonNull;
+
 import com.nsoft.api.security.jwt.verifier.JWTClaimsSet;
 import com.nsoft.api.security.jwt.verifier.JWTProcessor;
 import com.nsoft.api.security.spring.filter.error.ErrorHandler;
-import com.nsoft.api.security.spring.filter.internal.util.HeaderUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -44,7 +46,7 @@ public final class ProtectedRouteHandler {
 
     public ProtectedRouteHandler(final ProtectedRouteRegistry protectedRouteRegistry,
             final JWTProcessor jwtProcessor, final ErrorHandler errorHandler) {
-        this.protectedRouteRegistry = Objects.requireNonNull(protectedRouteRegistry);
+        this.protectedRouteRegistry = requireNonNull(protectedRouteRegistry);
 
         setJWTProcessor(jwtProcessor);
         setErrorHandler(errorHandler);
@@ -60,7 +62,7 @@ public final class ProtectedRouteHandler {
      * @param jwtProcessor to use when processing incoming Bearer tokens
      */
     public void setJWTProcessor(final JWTProcessor jwtProcessor) {
-        this.jwtProcessor = Objects.requireNonNullElseGet(jwtProcessor, JWTProcessor::getDefault);
+        this.jwtProcessor = requireNonNullElseGet(jwtProcessor, JWTProcessor::getDefault);
     }
 
     /**
@@ -73,7 +75,7 @@ public final class ProtectedRouteHandler {
      * @param jwtProcessorSupplier used to retrieve the {@link JWTProcessor} instance
      */
     public void setJWTProcessor(final Supplier<JWTProcessor> jwtProcessorSupplier) {
-        setJWTProcessor(Objects.requireNonNull(jwtProcessorSupplier.get()));
+        setJWTProcessor(requireNonNull(jwtProcessorSupplier.get()));
     }
 
     /**
@@ -86,7 +88,7 @@ public final class ProtectedRouteHandler {
      * @param errorHandler to use when handling errors such as invalid token processing
      */
     public void setErrorHandler(final ErrorHandler errorHandler) {
-        this.errorHandler = Objects.requireNonNullElseGet(errorHandler, ErrorHandler::getFallback);
+        this.errorHandler = requireNonNullElseGet(errorHandler, ErrorHandler::getFallback);
     }
 
     /**
@@ -99,7 +101,7 @@ public final class ProtectedRouteHandler {
      * @param errorHandlerSupplier used to retrieve the {@link ErrorHandler} instance
      */
     public void setErrorHandler(final Supplier<ErrorHandler> errorHandlerSupplier) {
-        setErrorHandler(Objects.requireNonNull(errorHandlerSupplier.get()));
+        setErrorHandler(requireNonNull(errorHandlerSupplier.get()));
     }
 
     /**
@@ -111,7 +113,7 @@ public final class ProtectedRouteHandler {
      * @return whether the incoming HTTP request requires authorization
      */
     public boolean requestNeedsAuthorization(final HttpServletRequest request) {
-        Objects.requireNonNull(request);
+        requireNonNull(request);
 
         return protectedRouteRegistry.protectedRoutes.stream().anyMatch(x -> x.matches(request));
     }
@@ -130,19 +132,19 @@ public final class ProtectedRouteHandler {
      */
     public boolean handleBearerToken(final HttpServletRequest request,
             final HttpServletResponse response) {
-        Objects.requireNonNull(request);
-        Objects.requireNonNull(response);
+        requireNonNull(request);
+        requireNonNull(response);
 
-        final Optional<String> optionalToken = HeaderUtil.extractBearerToken(request);
+        final Optional<String> optionalToken = extractBearerToken(request);
 
-        if (optionalToken.isEmpty()) {
+        if (!optionalToken.isPresent()) {
             errorHandler.handleInvalidBearerTokenError(response);
             return false;
         }
 
         final Optional<JWTClaimsSet> optionalClaims = jwtProcessor.process(optionalToken.get());
 
-        if (optionalClaims.isEmpty()) {
+        if (!optionalClaims.isPresent()) {
             errorHandler.handleJWTProcessingError(response);
             return false;
         }

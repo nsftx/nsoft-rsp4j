@@ -95,8 +95,18 @@ public abstract class AbstractProtectedRouteFilter extends GenericFilterBean {
         protectedRouteHandler.setErrorHandler(errorHandlerSupplier);
     }
 
+    /**
+     * Override method to change behaviour
+     *
+     * @see ProtectedRouteRegistry#enableAutomaticTrailCompensation(boolean)
+     */
+    protected boolean enableAutomaticTrailCompensation() {
+        return true;
+    }
+
     @Override
     public void initFilterBean() {
+        protectedRouteRegistry.enableAutomaticTrailCompensation(enableAutomaticTrailCompensation());
         registerProtectedRoutes(protectedRouteRegistry);
 
         protectedRouteHandler = new ProtectedRouteHandler(protectedRouteRegistry);

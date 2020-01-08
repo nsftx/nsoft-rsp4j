@@ -55,8 +55,8 @@ public class DefaultJWTProcessor implements JWTProcessor {
         }
 
         @Override
-        public void verify(com.nimbusds.jwt.JWTClaimsSet claimsSet) throws BadJWTException {
-            super.verify(claimsSet);
+        public void verify(com.nimbusds.jwt.JWTClaimsSet claimsSet, SecurityContext context) throws BadJWTException {
+            super.verify(claimsSet, context);
 
             if (!claimsSet.getIssuer().equals(configuration.getIssuer())) {
                 throw new BadJWTException("Invalid token issuer");
