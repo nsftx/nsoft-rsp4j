@@ -49,6 +49,7 @@ final class JWTProcessorTest {
         assertFalse(processor.process(() -> invalidToken).isPresent());
 
         assertTrue(processor.process(THE_EVERLASTING_TOKEN).isPresent());
+        assertTrue(processor.process(() -> THE_EVERLASTING_TOKEN).isPresent());
     }
 
     @Test
