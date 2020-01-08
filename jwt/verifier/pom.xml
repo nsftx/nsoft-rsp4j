@@ -20,7 +20,7 @@
         <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>nimbus-jose-jwt</artifactId>
-            <version>8.3</version>
+            <version>8.4</version>
         </dependency>
 
         <dependency>
