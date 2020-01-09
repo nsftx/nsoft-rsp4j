@@ -148,7 +148,7 @@
         <repository>
             <id>github</id>
             <name>GitHub nsftx Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/nsftx/nsoft-resource-server-java</url>
+            <url>https://maven.pkg.github.com/nsftx/nsoft-rsp4j</url>
         </repository>
     </distributionManagement>
 
