@@ -18,6 +18,7 @@
 
     <modules>
         <module>verifier</module>
+        <module>brep-spi</module>
     </modules>
 
     <dependencies>
