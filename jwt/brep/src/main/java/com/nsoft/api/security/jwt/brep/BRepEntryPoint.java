@@ -41,22 +41,22 @@ public interface BRepEntryPoint {
 
     /**
      * The entry point to the {@link com.nsoft.api.security.jwt.verifier.JWTClaimsSet} bounding
-     * process. A specific {@link ClaimMutator <HOLDER>} instance is returned depending on the
-     * {@link TokenIdentifier} input parameter.
+     * process. A specific {@link ClaimMutator<HOLDER>} instance is returned depending on the {@link
+     * TokenIdentifier} input parameter.
      * <p>
      * If the {@link TokenIdentifier} input is invalid, then a {@link InvalidTokenIdentifierException}
      * is thrown.
      * <p>
-     * If a {@link ClaimMutator <HOLDER>} instance is not found for a valid {@link TokenIdentifier},
+     * If a {@link ClaimMutator<HOLDER>} instance is not found for a valid {@link TokenIdentifier},
      * a {@link ClaimTransformerNotFoundException} should be thrown. Handling of a {@code null}
      * {@link TokenIdentifier} is not strictly defined and is left to the implementor to handle.
      *
      * @param tokenIdentifier object used to identify different types of incoming tokens, must not
      * be {@code null}
      * @param <HOLDER> {@link ClaimHolder}
-     * @return {@link ClaimMutator <HOLDER>} instance
+     * @return {@link ClaimMutator<HOLDER>} instance
      * @throws InvalidTokenIdentifierException if tokenIdentifier is invalid
-     * @throws ClaimTransformerNotFoundException if a {@link ClaimMutator <HOLDER>} instance is not
+     * @throws ClaimTransformerNotFoundException if a {@link ClaimMutator<HOLDER>} instance is not
      * found for a valid tokenIdentifier
      */
     <HOLDER extends ClaimHolder>
@@ -72,7 +72,7 @@ public interface BRepEntryPoint {
      *
      * @param supplier used to retrieve a {@link TokenIdentifier}, must not be {@code null}
      * @param <HOLDER> {@link ClaimHolder}
-     * @return {@link ClaimMutator <HOLDER>} instance
+     * @return {@link ClaimMutator<HOLDER>} instance
      * @throws NullPointerException if {@link Supplier<TokenIdentifier>} is null
      */
     default <HOLDER extends ClaimHolder>
