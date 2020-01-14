@@ -37,7 +37,7 @@ import java.util.function.Supplier;
  * @see #getClaims(Supplier)
  * @since 2020-01-10
  */
-public interface BRepEntryPoint {
+public interface BRepEntryPoint<IDENTIFIER extends TokenIdentifier> {
 
     /**
      * The entry point to the {@link com.nsoft.api.security.jwt.verifier.JWTClaimsSet} bounding
@@ -60,7 +60,7 @@ public interface BRepEntryPoint {
      * found for a valid tokenIdentifier
      */
     <HOLDER extends ClaimHolder>
-    ClaimMutator<HOLDER> getClaims(final TokenIdentifier tokenIdentifier);
+    ClaimMutator<HOLDER> getClaims(final IDENTIFIER tokenIdentifier);
 
     /**
      * A convenience method used to retrieve a {@link TokenIdentifier} from a {@link
@@ -75,7 +75,7 @@ public interface BRepEntryPoint {
      * @throws NullPointerException if {@link Supplier<TokenIdentifier>} is null
      */
     default <HOLDER extends ClaimHolder>
-    ClaimMutator<HOLDER> getClaims(final Supplier<TokenIdentifier> supplier) {
+    ClaimMutator<HOLDER> getClaims(final Supplier<IDENTIFIER> supplier) {
         return getClaims(requireNonNull(supplier).get());
     }
 }
