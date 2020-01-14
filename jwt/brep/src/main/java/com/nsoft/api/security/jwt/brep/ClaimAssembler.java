@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 /**
  * An object assembler abstraction used to assemble a bounded representation of a {@link
  * com.nsoft.api.security.jwt.verifier.JWTClaimsSet} from raw claim data. The claim data should be
- * received from a {@link ClaimMutator <HOLDER>} instance, typically via {@link
+ * received from a {@link ClaimMutator<HOLDER>} instance, typically via {@link
  * ClaimMutator#from}.
  *
  * @param <HOLDER> incoming claim holder
@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 public interface ClaimAssembler<HOLDER extends ClaimHolder> {
 
     /**
-     * Uses raw claim data received from a {@link ClaimMutator <HOLDER>} instance to assemble a
+     * Uses raw claim data received from a {@link ClaimMutator<HOLDER>} instance to assemble a
      * bounded representation of the received claim data using a {@link ClaimHolder} instance.
      * <p>
      * If successful, the assembled representation instance is returned. Error handling is not
@@ -33,7 +33,7 @@ public interface ClaimAssembler<HOLDER extends ClaimHolder> {
     HOLDER asHolder();
 
     /**
-     * Uses raw claim data received from a {@link ClaimMutator <HOLDER>} instance to assemble a
+     * Uses raw claim data received from a {@link ClaimMutator<HOLDER>} instance to assemble a
      * bounded representation of the received claim data using a {@link Map} instance. Claim names
      * and values are represented as keys and values associated with those keys in the returned
      * {@link Map} instance.
