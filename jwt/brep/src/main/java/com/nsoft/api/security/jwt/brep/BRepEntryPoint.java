@@ -60,8 +60,7 @@ public interface BRepEntryPoint {
      * found for a valid tokenIdentifier
      */
     <HOLDER extends ClaimHolder>
-    ClaimMutator<HOLDER> getClaims(final TokenIdentifier tokenIdentifier)
-            throws InvalidTokenIdentifierException, ClaimTransformerNotFoundException;
+    ClaimMutator<HOLDER> getClaims(final TokenIdentifier tokenIdentifier);
 
     /**
      * A convenience method used to retrieve a {@link TokenIdentifier} from a {@link
