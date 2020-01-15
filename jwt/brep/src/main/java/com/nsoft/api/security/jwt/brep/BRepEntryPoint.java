@@ -2,15 +2,17 @@ package com.nsoft.api.security.jwt.brep;
 
 import static java.util.Objects.requireNonNull;
 
-import com.nsoft.api.security.jwt.brep.exception.ClaimTransformerNotFoundException;
+import com.nsoft.api.security.jwt.brep.exception.ClaimHolderMissingDefaultConstructorException;
+import com.nsoft.api.security.jwt.brep.exception.ClaimMutatorNotFoundException;
 import com.nsoft.api.security.jwt.brep.exception.InvalidTokenIdentifierException;
+import com.nsoft.api.security.jwt.brep.exception.TokenIdentifierMismatchException;
 import com.nsoft.api.security.jwt.brep.token.ClaimHolder;
 import com.nsoft.api.security.jwt.brep.token.TokenIdentifier;
 
 import java.util.function.Supplier;
 
 /**
- * bRep is a JSON Web Token (JWT) claim set bounding API. The bounding process is a done in three
+ * bRep is a JSON Web Token (JWT) claim set bounding API. The bounding process is done in three
  * stages, all of which are directly dependant on the previous.
  * <p>
  * {@link BRepEntryPoint} is the process entry point, in which token identification is performed.
@@ -33,8 +35,8 @@ import java.util.function.Supplier;
  * </ul>
  *
  * @author Mislav Milicevic
- * @see #getClaims(TokenIdentifier)
- * @see #getClaims(Supplier)
+ * @see #getClaims(TokenIdentifier, Class)
+ * @see #getClaims(Supplier, Class)
  * @since 2020-01-10
  */
 public interface BRepEntryPoint<IDENTIFIER extends TokenIdentifier> {
@@ -48,24 +50,28 @@ public interface BRepEntryPoint<IDENTIFIER extends TokenIdentifier> {
      * is thrown.
      * <p>
      * If a {@link ClaimMutator<HOLDER>} instance is not found for a valid {@link TokenIdentifier},
-     * a {@link ClaimTransformerNotFoundException} should be thrown. Handling of a {@code null}
-     * {@link TokenIdentifier} is not strictly defined and is left to the implementor to handle.
+     * a {@link ClaimMutatorNotFoundException} should be thrown. Handling of a {@code null} {@link
+     * TokenIdentifier} is not strictly defined and is left to the implementor to handle.
      *
      * @param tokenIdentifier object used to identify different types of incoming tokens, must not
      * be {@code null}
      * @param <HOLDER> {@link ClaimHolder}
      * @return {@link ClaimMutator<HOLDER>} instance
      * @throws InvalidTokenIdentifierException if tokenIdentifier is invalid
-     * @throws ClaimTransformerNotFoundException if a {@link ClaimMutator<HOLDER>} instance is not
-     * found for a valid tokenIdentifier
+     * @throws ClaimMutatorNotFoundException if a {@link ClaimMutator<HOLDER>} instance is not found
+     * for a valid tokenIdentifier
+     * @throws ClaimHolderMissingDefaultConstructorException if {@link Class<HOLDER>} doesn't have a
+     * default constructor available
+     * @throws TokenIdentifierMismatchException if {@code tokenIdentifier} doesn't match the
+     * identifier of the {@link HOLDER}
      */
-    <HOLDER extends ClaimHolder>
-    ClaimMutator<HOLDER> getClaims(final IDENTIFIER tokenIdentifier);
+    <HOLDER extends ClaimHolder<IDENTIFIER>>
+    ClaimMutator<HOLDER> getClaims(final IDENTIFIER tokenIdentifier, final Class<HOLDER> holder);
 
     /**
      * A convenience method used to retrieve a {@link TokenIdentifier} from a {@link
      * Supplier<TokenIdentifier>}. The retrieve {@link TokenIdentifier} is passed to {@link
-     * #getClaims(TokenIdentifier)} for further handling.
+     * #getClaims(TokenIdentifier, Class)} for further handling.
      * <p>
      * If the {@link Supplier<TokenIdentifier>} is null, a {@link NullPointerException} is thrown.
      *
@@ -74,8 +80,8 @@ public interface BRepEntryPoint<IDENTIFIER extends TokenIdentifier> {
      * @return {@link ClaimMutator<HOLDER>} instance
      * @throws NullPointerException if {@link Supplier<TokenIdentifier>} is null
      */
-    default <HOLDER extends ClaimHolder>
-    ClaimMutator<HOLDER> getClaims(final Supplier<IDENTIFIER> supplier) {
-        return getClaims(requireNonNull(supplier).get());
+    default <HOLDER extends ClaimHolder<IDENTIFIER>>
+    ClaimMutator<HOLDER> getClaims(final Supplier<IDENTIFIER> supplier, Class<HOLDER> holder) {
+        return getClaims(requireNonNull(supplier).get(), holder);
     }
 }

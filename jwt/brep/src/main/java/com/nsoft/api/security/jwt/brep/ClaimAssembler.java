@@ -9,8 +9,7 @@ import java.util.stream.Stream;
 /**
  * An object assembler abstraction used to assemble a bounded representation of a {@link
  * com.nsoft.api.security.jwt.verifier.JWTClaimsSet} from raw claim data. The claim data should be
- * received from a {@link ClaimMutator<HOLDER>} instance, typically via {@link
- * ClaimMutator#from}.
+ * received from a {@link ClaimMutator<HOLDER>} instance, typically via {@link ClaimMutator#from}.
  *
  * @param <HOLDER> incoming claim holder
  * @author Mislav Milicevic
@@ -42,8 +41,11 @@ public interface ClaimAssembler<HOLDER extends ClaimHolder> {
      * strictly defined and is left to the implementor.
      *
      * @return {@link Map} containing claims as key value pairs
+     * @throws UnsupportedOperationException if not implemented
      */
-    Map<String, Object> asMap();
+    default Map<String, Object> asMap() {
+        throw new UnsupportedOperationException("not implemented");
+    }
 
     /**
      * By default, asStream() is a convenience method meant to return a {@link Stream} instance
@@ -51,6 +53,7 @@ public interface ClaimAssembler<HOLDER extends ClaimHolder> {
      * functionality of this method.
      *
      * @return {@link Stream} containing claims represented by {@link Entry} instances
+     * @throws UnsupportedOperationException if {@link #asMap()} is not implemented (by default)
      */
     default Stream<Entry<String, Object>> asStream() {
         return asMap().entrySet().stream();

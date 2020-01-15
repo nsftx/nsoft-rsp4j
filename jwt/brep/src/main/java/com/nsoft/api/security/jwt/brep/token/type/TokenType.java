@@ -14,5 +14,15 @@ public enum TokenType implements TokenIdentifier {
     /**
      * Represents an Access token type
      */
-    ACCESS
+    ACCESS;
+
+    @Override
+    public boolean matches(final TokenIdentifier tokenIdentifier) {
+        if (!(tokenIdentifier instanceof TokenType)) {
+            return false;
+        }
+
+        TokenType type = (TokenType) tokenIdentifier;
+        return equals(type);
+    }
 }

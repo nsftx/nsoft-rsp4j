@@ -12,7 +12,7 @@ import java.util.function.Supplier;
  * The mutated data is passed to a {@link ClaimAssembler<HOLDER>} instance which handles the
  * in-memory representation of the raw data.
  *
- * @param <HOLDER> {@link ClaimHolder} instance handled by the transformer
+ * @param <HOLDER> {@link ClaimHolder} instance handled by the mutator
  * @author Mislav Milicevic
  * @see #from(JWTClaimsSet)
  * @see #from(Supplier)

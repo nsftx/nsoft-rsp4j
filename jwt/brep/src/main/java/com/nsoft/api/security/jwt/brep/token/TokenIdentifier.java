@@ -8,4 +8,6 @@ package com.nsoft.api.security.jwt.brep.token;
  * @since 2020-01-10
  */
 public interface TokenIdentifier {
+
+    boolean matches(final TokenIdentifier tokenIdentifier);
 }

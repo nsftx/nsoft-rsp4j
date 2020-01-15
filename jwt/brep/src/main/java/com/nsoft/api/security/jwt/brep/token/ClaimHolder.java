@@ -11,5 +11,7 @@ package com.nsoft.api.security.jwt.brep.token;
  * @author Mislav Milicevic
  * @since 2020-01-10
  */
-public interface ClaimHolder {
+public interface ClaimHolder<IDENTIFIER extends TokenIdentifier> {
+
+    IDENTIFIER getIdentifier();
 }
