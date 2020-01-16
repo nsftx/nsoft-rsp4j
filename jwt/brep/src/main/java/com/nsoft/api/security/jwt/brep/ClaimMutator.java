@@ -18,6 +18,7 @@ import java.util.function.Supplier;
  * @see #from(Supplier)
  * @since 2020-01-10
  */
+@FunctionalInterface
 public interface ClaimMutator<HOLDER extends ClaimHolder> {
 
     /**

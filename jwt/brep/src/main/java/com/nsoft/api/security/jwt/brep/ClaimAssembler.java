@@ -18,6 +18,7 @@ import java.util.stream.Stream;
  * @see #asStream()
  * @since 2020-01-10
  */
+@FunctionalInterface
 public interface ClaimAssembler<HOLDER extends ClaimHolder> {
 
     /**
