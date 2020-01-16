@@ -39,9 +39,9 @@ If your project is using Gradle, please follow this [guide](https://help.github.
 ```groovy
 dependencies {
     ...
-    implementation "com.nsoft.security.api:security-spring-filter:1.4.0"
+    implementation "com.nsoft.api.security:security-spring-filter:1.4.0"
     ...
-    implementation "com.nsoft.security.api:security-spring-resolver:1.4.0"
+    implementation "com.nsoft.api.security:security-spring-resolver:1.4.0"
     ...
 }
 ```
