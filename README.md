@@ -22,13 +22,13 @@ If your project is using Gradle, please follow this [guide](https://help.github.
     <dependency>
       <groupId>com.nsoft.api.security</groupId>
       <artifactId>security-jwt-verifier</artifactId>
-      <version>1.3.0</version>
+      <version>1.4.0</version>
     </dependency>
     ...
     <dependency>
       <groupId>com.nsoft.api.security</groupId>
       <artifactId>security-spring-resolver</artifactId>
-      <version>1.3.0</version>
+      <version>1.4.0</version>
     </dependency>
     ...
 <dependencies>
@@ -39,9 +39,9 @@ If your project is using Gradle, please follow this [guide](https://help.github.
 ```groovy
 dependencies {
     ...
-    implementation "com.nsoft.security.api:security-spring-filter:1.3.0"
+    implementation "com.nsoft.security.api:security-spring-filter:1.4.0"
     ...
-    implementation "com.nsoft.security.api:security-spring-resolver:1.3.0"
+    implementation "com.nsoft.security.api:security-spring-resolver:1.4.0"
     ...
 }
 ```
