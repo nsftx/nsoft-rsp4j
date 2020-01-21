@@ -13,6 +13,8 @@ import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
 import com.nsoft.api.security.jwt.verifier.JWTClaimsSet;
 import com.nsoft.api.security.jwt.verifier.JWTProcessor;
 import com.nsoft.api.security.jwt.verifier.JWTProcessorConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -20,6 +22,8 @@ import java.text.ParseException;
 import java.util.Optional;
 
 public class DefaultJWTProcessor implements JWTProcessor {
+
+    private final Logger logger = LoggerFactory.getLogger(DefaultJWTProcessor.class);
 
     private final ConfigurableJWTProcessor<SecurityContext> processor;
 
@@ -41,6 +45,7 @@ public class DefaultJWTProcessor implements JWTProcessor {
         try {
             return Optional.of(new ImmutableJWTClaimsSet(processor.process(token, null)));
         } catch (ParseException | JOSEException | BadJOSEException e) {
+            logger.debug("Failed to process incoming token:", e);
             return Optional.empty();
         }
     }
