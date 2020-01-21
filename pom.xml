@@ -6,7 +6,7 @@
 
     <groupId>com.nsoft.api.security</groupId>
     <artifactId>security-parent</artifactId>
-    <version>1.4.0</version>
+    <version>1.4.1</version>
     <packaging>pom</packaging>
 
     <name>NSoft Security API</name>
@@ -19,6 +19,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
+        <slf4j.version>1.7.30</slf4j.version>
         <junit.platform.version>1.5.2</junit.platform.version>
         <junit.jupiter.version>5.5.2</junit.jupiter.version>
         <mockito.version>3.2.4</mockito.version>
@@ -93,6 +94,19 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.7.30</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>1.7.30</version>
+                <scope>test</scope>
+            </dependency>
+
             <dependency>
                 <groupId>org.junit.platform</groupId>
                 <artifactId>junit-platform-engine</artifactId>
