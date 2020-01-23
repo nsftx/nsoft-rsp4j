@@ -7,6 +7,7 @@ import com.nimbusds.jose.proc.BadJOSEException;
 import com.nimbusds.jose.proc.JWSKeySelector;
 import com.nimbusds.jose.proc.JWSVerificationKeySelector;
 import com.nimbusds.jose.proc.SecurityContext;
+import com.nimbusds.jose.util.DefaultResourceRetriever;
 import com.nimbusds.jwt.proc.BadJWTException;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
@@ -30,14 +31,17 @@ public class DefaultJWTProcessor implements JWTProcessor {
     public DefaultJWTProcessor() throws MalformedURLException {
         this.processor = new com.nimbusds.jwt.proc.DefaultJWTProcessor<>();
 
-        JWKSource<SecurityContext> jwkSource = new RemoteJWKSet<>(
-                new URL(getConfiguration().getJWKSUrl()));
+        final JWTProcessorConfiguration config = getConfiguration();
 
-        JWSKeySelector<SecurityContext> keySelector = new JWSVerificationKeySelector<>(
-                getConfiguration().getSigningAlgorithm(), jwkSource);
+        final JWKSource<SecurityContext> jwkSource = new RemoteJWKSet<>(
+                new URL(config.getJWKSUrl()),
+                new DefaultResourceRetriever(config.getConnectTimeout(), config.getReadTimeout()));
+
+        final JWSKeySelector<SecurityContext> keySelector = new JWSVerificationKeySelector<>(
+                config.getSigningAlgorithm(), jwkSource);
 
         processor.setJWSKeySelector(keySelector);
-        processor.setJWTClaimsSetVerifier(new JWTClaimsVerifier(getConfiguration()));
+        processor.setJWTClaimsSetVerifier(new JWTClaimsVerifier(config));
     }
 
     @Override
@@ -60,7 +64,8 @@ public class DefaultJWTProcessor implements JWTProcessor {
         }
 
         @Override
-        public void verify(com.nimbusds.jwt.JWTClaimsSet claimsSet, SecurityContext context) throws BadJWTException {
+        public void verify(com.nimbusds.jwt.JWTClaimsSet claimsSet, SecurityContext context)
+                throws BadJWTException {
             super.verify(claimsSet, context);
 
             if (!claimsSet.getIssuer().equals(configuration.getIssuer())) {

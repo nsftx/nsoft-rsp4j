@@ -32,4 +32,23 @@ public interface JWTProcessorConfiguration {
      */
     JWSAlgorithm getSigningAlgorithm();
 
+    /**
+     * @return
+     */
+    int getConnectTimeout();
+
+    /**
+     * @param connectTimeout
+     */
+    void setConnectTimeout(int connectTimeout);
+
+    /**
+     * @return
+     */
+    int getReadTimeout();
+
+    /**
+     * @param readTimeout
+     */
+    void setReadTimeout(int readTimeout);
 }

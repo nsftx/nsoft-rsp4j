@@ -1,9 +1,9 @@
 package com.nsoft.api.security.test_support;
 
 import com.nimbusds.jose.JWSAlgorithm;
-import com.nsoft.api.security.jwt.verifier.JWTProcessorConfiguration;
+import com.nsoft.api.security.jwt.verifier.AbstractJWTProcessorConfiguration;
 
-final class LocalProcessorConfiguration implements JWTProcessorConfiguration {
+final class LocalProcessorConfiguration extends AbstractJWTProcessorConfiguration {
 
     @Override
     public String getJWKSUrl() {

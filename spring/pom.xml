@@ -7,11 +7,11 @@
     <parent>
         <groupId>com.nsoft.api.security</groupId>
         <artifactId>security-parent</artifactId>
-        <version>1.4.1</version>
+        <version>1.5.0</version>
     </parent>
 
     <artifactId>security-spring-parent</artifactId>
-    <version>1.4.1</version>
+    <version>1.5.0</version>
     <packaging>pom</packaging>
 
     <name>NSoft Security API - Spring</name>
@@ -22,8 +22,7 @@
         <spring.web.security.version>5.2.1.RELEASE</spring.web.security.version>
         <javax.servlet.version>4.0.1</javax.servlet.version>
         <zalando.version>0.25.2</zalando.version>
-        <chiwava.commons.version>1.2.0</chiwava.commons.version>
-        <chiwava.error.version>1.2.0</chiwava.error.version>
+        <chiwava.version>2.0.0.RC1</chiwava.version>
     </properties>
 
     <modules>

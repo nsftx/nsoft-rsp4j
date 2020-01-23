@@ -1,9 +1,9 @@
 package com.nsoft.api.security.jwt.verifier.internal;
 
 import com.nimbusds.jose.JWSAlgorithm;
-import com.nsoft.api.security.jwt.verifier.JWTProcessorConfiguration;
+import com.nsoft.api.security.jwt.verifier.AbstractJWTProcessorConfiguration;
 
-public class DefaultJWTProcessorConfiguration implements JWTProcessorConfiguration {
+public class DefaultJWTProcessorConfiguration extends AbstractJWTProcessorConfiguration {
 
     private static final String DEFAULT_JWKS_URL = "https://accounts.nsoft.com/.well-known/jwks.json";
 

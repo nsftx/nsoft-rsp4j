@@ -2,10 +2,10 @@ package com.nsoft.api.security.spring.resolver;
 
 import com.nsoft.api.security.jwt.verifier.JWTClaimsSet;
 import com.nsoft.api.security.jwt.verifier.JWTProcessor;
+import com.nsoft.api.security.spring.resolver.internal.compatibility.j9.Objects;
 import com.nsoft.api.security.spring.resolver.internal.util.HeaderUtil;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Objects;
 
 /**
  * Support class which provides support for bearer token and {@link JWTClaimsSet} extraction.
