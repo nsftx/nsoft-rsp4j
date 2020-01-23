@@ -1,5 +1,7 @@
 package com.nsoft.api.security.jwt.verifier;
 
+import static java.util.Objects.requireNonNull;
+
 import com.nsoft.api.security.jwt.verifier.exception.ProcessorInstantiationException;
 import com.nsoft.api.security.jwt.verifier.internal.DefaultJWTProcessor;
 import com.nsoft.api.security.jwt.verifier.internal.DefaultJWTProcessorConfiguration;
@@ -28,7 +30,7 @@ public interface JWTProcessor {
      * Optional<JWTClaimsSet>} will be returned. Otherwise, an empty {@link Optional} will be
      * returned.
      *
-     * @param token OAuth2 access token
+     * @param token OAuth2 access token, must not be null {@code null}
      * @return {@link JWTClaimsSet} if token is verified successfully
      */
     Optional<JWTClaimsSet> process(String token);
@@ -38,11 +40,11 @@ public interface JWTProcessor {
      * Optional<JWTClaimsSet>} will be returned. Otherwise, an empty {@link Optional} will be
      * returned.
      *
-     * @param tokenSupplier OAuth2 access token supplier
+     * @param tokenSupplier OAuth2 access token supplier, must not be {@code null}
      * @return {@link JWTClaimsSet} if token is verified successfully
      */
     default Optional<JWTClaimsSet> process(Supplier<String> tokenSupplier) {
-        return process(tokenSupplier.get());
+        return process(requireNonNull(tokenSupplier).get());
     }
 
     /**
