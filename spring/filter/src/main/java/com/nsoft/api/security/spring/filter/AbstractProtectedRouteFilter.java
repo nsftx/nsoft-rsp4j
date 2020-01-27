@@ -23,8 +23,8 @@ import java.io.IOException;
  * The implementor is expected to configure the Filter via the {@link #configureFilter} method.
  * <p>
  * The implementor is expected to register the routes they wish to protect inside the {@link
- * AbstractProtectedRouteFilter#registerProtectedRoutes(ProtectedRouteRegistry)} method. The route
- * registration process is described inside the {@link ProtectedRouteRegistry} class.
+ * #registerProtectedRoutes} method. The route registration process is described inside the {@link
+ * ProtectedRouteRegistry} class.
  * <p>
  * The implemented {@link javax.servlet.Filter} internally uses a {@link JWTProcessor}
  * implementation to validate the Bearer token that was provided when accessing a protected REST
