@@ -1,6 +1,5 @@
 package com.nsoft.api.security.spring.filter.route;
 
-import static com.nsoft.api.security.spring.filter.internal.compatibility.j9.Objects.requireNonNullElseGet;
 import static com.nsoft.api.security.spring.filter.internal.util.HeaderUtil.extractBearerToken;
 import static java.util.Objects.requireNonNull;
 
@@ -40,10 +39,6 @@ public final class ProtectedRouteHandler {
     private JWTProcessor jwtProcessor;
     private ErrorHandler errorHandler;
 
-    public ProtectedRouteHandler(final ProtectedRouteRegistry protectedRouteRegistry) {
-        this(protectedRouteRegistry, JWTProcessor.getDefault(), ErrorHandler.getDefault());
-    }
-
     public ProtectedRouteHandler(final ProtectedRouteRegistry protectedRouteRegistry,
             final JWTProcessor jwtProcessor, final ErrorHandler errorHandler) {
         this.protectedRouteRegistry = requireNonNull(protectedRouteRegistry);
@@ -55,24 +50,19 @@ public final class ProtectedRouteHandler {
     /**
      * Sets the {@link JWTProcessor} instance that should be used when processing incoming Bearer
      * tokens.
-     * <p>
-     * If {@code null} is passed as a parameter, the default Chameleon Accounts specific
-     * implementation is used.
      *
-     * @param jwtProcessor to use when processing incoming Bearer tokens
+     * @param jwtProcessor to use when processing incoming Bearer tokens, must not be {@code null}
      */
     public void setJWTProcessor(final JWTProcessor jwtProcessor) {
-        this.jwtProcessor = requireNonNullElseGet(jwtProcessor, JWTProcessor::getDefault);
+        this.jwtProcessor = requireNonNull(jwtProcessor);
     }
 
     /**
      * Sets the {@link JWTProcessor} instance provided through a {@link Supplier} that should be
      * used when processing incoming Bearer tokens.
-     * <p>
-     * If {@code null} is passed as a parameter, the default Chameleon Accounts specific
-     * implementation is used.
      *
-     * @param jwtProcessorSupplier used to retrieve the {@link JWTProcessor} instance
+     * @param jwtProcessorSupplier used to retrieve the {@link JWTProcessor} instance, must not be
+     * {@code null}
      */
     public void setJWTProcessor(final Supplier<JWTProcessor> jwtProcessorSupplier) {
         setJWTProcessor(requireNonNull(jwtProcessorSupplier.get()));
@@ -81,24 +71,20 @@ public final class ProtectedRouteHandler {
     /**
      * Sets the {@link ErrorHandler} instance that should be used when handling errors that occur
      * during Bearer token processing.
-     * <p>
-     * If {@code null} is passed as a parameter, a fallback instance ({@link
-     * ErrorHandler#getFallback()}) is used.
      *
-     * @param errorHandler to use when handling errors such as invalid token processing
+     * @param errorHandler to use when handling errors such as invalid token processing, must not be
+     * {@code null}
      */
     public void setErrorHandler(final ErrorHandler errorHandler) {
-        this.errorHandler = requireNonNullElseGet(errorHandler, ErrorHandler::getFallback);
+        this.errorHandler = requireNonNull(errorHandler);
     }
 
     /**
      * Sets the {@link ErrorHandler} instance provided through a {@link Supplier} that should be
      * used when handling errors that occur during Bearer token processing.
-     * <p>
-     * If {@code null} is passed as a parameter, a fallback instance ({@link
-     * ErrorHandler#getFallback()}) is used.
      *
-     * @param errorHandlerSupplier used to retrieve the {@link ErrorHandler} instance
+     * @param errorHandlerSupplier used to retrieve the {@link ErrorHandler} instance, must not be
+     * {@code null}
      */
     public void setErrorHandler(final Supplier<ErrorHandler> errorHandlerSupplier) {
         setErrorHandler(requireNonNull(errorHandlerSupplier.get()));

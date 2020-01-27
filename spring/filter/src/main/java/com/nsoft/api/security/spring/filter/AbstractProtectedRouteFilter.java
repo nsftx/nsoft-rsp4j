@@ -2,6 +2,7 @@ package com.nsoft.api.security.spring.filter;
 
 import com.nsoft.api.security.jwt.verifier.JWTProcessor;
 import com.nsoft.api.security.spring.filter.error.ErrorHandler;
+import com.nsoft.api.security.spring.filter.exception.InvalidFilterConfigurationException;
 import com.nsoft.api.security.spring.filter.route.ProtectedRouteHandler;
 import com.nsoft.api.security.spring.filter.route.ProtectedRouteRegistry;
 import org.springframework.web.filter.GenericFilterBean;
@@ -13,12 +14,13 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.function.Supplier;
 
 /**
  * A {@link javax.servlet.Filter} abstraction used to limit interaction with specified REST routes.
  * In order to add the {@link javax.servlet.Filter} implementation to the {@link FilterChain}, the
  * implementor must annotate their implementation class with {@link org.springframework.stereotype.Component}
+ * <p>
+ * The implementor is expected to configure the Filter via the {@link #configureFilter} method.
  * <p>
  * The implementor is expected to register the routes they wish to protect inside the {@link
  * AbstractProtectedRouteFilter#registerProtectedRoutes(ProtectedRouteRegistry)} method. The route
@@ -28,15 +30,11 @@ import java.util.function.Supplier;
  * implementation to validate the Bearer token that was provided when accessing a protected REST
  * route.
  * <p>
- * By default, the {@link JWTProcessor} implementation being used by the {@link
- * javax.servlet.Filter} is specifically designed to accept Identity and Access tokens issued by
- * Chameleon Accounts. The implementor may use their own implementation of {@link JWTProcessor} by
- * setting it via {@link AbstractProtectedRouteFilter#setJWTProcessor(JWTProcessor)}.
  *
  * @author Mislav Milicevic
+ * @see #configureFilter
  * @see #registerProtectedRoutes
  * @see ProtectedRouteRegistry
- * @see #setJWTProcessor
  * @see JWTProcessor
  * @since 2019-10-01
  */
@@ -45,71 +43,51 @@ public abstract class AbstractProtectedRouteFilter extends GenericFilterBean {
     private final ProtectedRouteRegistry protectedRouteRegistry = new ProtectedRouteRegistry();
     private ProtectedRouteHandler protectedRouteHandler;
 
+    private ProtectedRouteFilterConfiguration configuration = new ProtectedRouteFilterConfiguration();
+
     /**
      * The implementor is expected to register the routes they wish to protect inside this method.
      * <p>
      * To register a protected route, the implementor must invoke {@link
      * ProtectedRouteRegistry#registerRoute}
      *
-     * @param registry used to register protected routes
+     * @param registry {@link ProtectedRouteRegistry} instance used to register protected routes
      */
-    public abstract void registerProtectedRoutes(final ProtectedRouteRegistry registry);
+    protected abstract void registerProtectedRoutes(final ProtectedRouteRegistry registry);
 
     /**
-     * Sets the {@link JWTProcessor} instance that should be used when processing incoming Bearer
-     * tokens.
+     * The implementor is expected to configure the filter inside this method. The configuration is
+     * done by invoking the setter methods inside {@link ProtectedRouteFilterConfiguration}.
      *
-     * @param jwtProcessor to use when processing incoming Bearer tokens
+     * @param configuration {@link ProtectedRouteFilterConfiguration} instance used to configure the
+     * filter
      */
-    public void setJWTProcessor(final JWTProcessor jwtProcessor) {
-        protectedRouteHandler.setJWTProcessor(jwtProcessor);
-    }
-
-    /**
-     * Sets the {@link JWTProcessor} instance provided through a {@link Supplier} that should be
-     * used when processing incoming Bearer tokens.
-     *
-     * @param jwtProcessorSupplier used to retrieve the {@link JWTProcessor} instance
-     */
-    public void setJWTProcessor(final Supplier<JWTProcessor> jwtProcessorSupplier) {
-        protectedRouteHandler.setJWTProcessor(jwtProcessorSupplier);
-    }
-
-    /**
-     * Sets the {@link ErrorHandler} instance that should be used when handling errors that occur
-     * during Bearer token processing.
-     *
-     * @param errorHandler to use when handling errors such as invalid token processing
-     */
-    public void setErrorHandler(final ErrorHandler errorHandler) {
-        protectedRouteHandler.setErrorHandler(errorHandler);
-    }
-
-    /**
-     * Sets the {@link ErrorHandler} instance provided through a {@link Supplier} that should be
-     * used when handling errors that occur during Bearer token processing.
-     *
-     * @param errorHandlerSupplier used to retrieve the {@link ErrorHandler} instance
-     */
-    public void setErrorHandler(final Supplier<ErrorHandler> errorHandlerSupplier) {
-        protectedRouteHandler.setErrorHandler(errorHandlerSupplier);
-    }
-
-    /**
-     * Override method to change behaviour
-     *
-     * @see ProtectedRouteRegistry#enableAutomaticTrailCompensation(boolean)
-     */
-    protected boolean enableAutomaticTrailCompensation() {
-        return true;
-    }
+    protected abstract void configureFilter(final ProtectedRouteFilterConfiguration configuration);
 
     @Override
     public void initFilterBean() {
-        protectedRouteRegistry.enableAutomaticTrailCompensation(enableAutomaticTrailCompensation());
+        configureFilter(configuration);
+
+        protectedRouteRegistry
+                .enableAutomaticTrailCompensation(configuration.isAutomaticTrailCompensation());
         registerProtectedRoutes(protectedRouteRegistry);
 
-        protectedRouteHandler = new ProtectedRouteHandler(protectedRouteRegistry);
+        if (configuration.getJwtProcessorConfiguration() != null
+                && configuration.getJwtProcessor() != null) {
+            throw new InvalidFilterConfigurationException(
+                    "Configuration conflict - can't set both JWTProcessor instance and configuration");
+        }
+
+        final JWTProcessor processor = configuration.getJwtProcessor() == null
+                ? JWTProcessor.fromConfiguration(configuration.getJwtProcessorConfiguration())
+                : configuration.getJwtProcessor();
+
+        final ErrorHandler errorHandler = configuration.getErrorHandler() == null
+                ? ErrorHandler.getDefault()
+                : configuration.getErrorHandler();
+
+        protectedRouteHandler = new ProtectedRouteHandler(protectedRouteRegistry, processor,
+                errorHandler);
     }
 
     @Override
@@ -128,5 +106,4 @@ public abstract class AbstractProtectedRouteFilter extends GenericFilterBean {
             filterChain.doFilter(servletRequest, httpServletResponse);
         }
     }
-
 }
