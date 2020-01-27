@@ -8,13 +8,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
-import com.nsoft.api.security.test_support.LocalProcessor;
+import com.nsoft.api.security.test_support.LocalProcessorConfiguration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockserver.integration.ClientAndServer;
-
-import java.net.MalformedURLException;
 
 final class JWTProcessorTest {
 
@@ -31,8 +29,8 @@ final class JWTProcessorTest {
     }
 
     @Test
-    void process() throws MalformedURLException {
-        final JWTProcessor processor = new LocalProcessor();
+    void process() {
+        final JWTProcessor processor = JWTProcessor.fromConfiguration(new LocalProcessorConfiguration());
 
         clientAndServer
                 .when(request()
@@ -54,12 +52,14 @@ final class JWTProcessorTest {
 
     @Test
     void getConfiguration() {
-        assertNotNull(JWTProcessor.getDefault().getConfiguration());
+        final JWTProcessorConfiguration configuration = new LocalProcessorConfiguration();
+
+        assertNotNull(JWTProcessor.fromConfiguration(configuration).getConfiguration());
     }
 
     @Test
     void getDefault() {
-        assertNotNull(JWTProcessor.getDefault());
+        assertNotNull(JWTProcessor.fromConfiguration(new LocalProcessorConfiguration()));
     }
 
 }

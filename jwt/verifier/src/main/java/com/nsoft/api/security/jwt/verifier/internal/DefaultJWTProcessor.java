@@ -1,5 +1,7 @@
 package com.nsoft.api.security.jwt.verifier.internal;
 
+import static java.util.Objects.requireNonNull;
+
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.jwk.source.RemoteJWKSet;
@@ -28,20 +30,25 @@ public class DefaultJWTProcessor implements JWTProcessor {
 
     private final ConfigurableJWTProcessor<SecurityContext> processor;
 
-    public DefaultJWTProcessor() throws MalformedURLException {
+    private final JWTProcessorConfiguration configuration;
+
+    public DefaultJWTProcessor(final JWTProcessorConfiguration configuration)
+            throws MalformedURLException {
+        this.configuration = requireNonNull(configuration, "configuration must be provided");
+
         this.processor = new com.nimbusds.jwt.proc.DefaultJWTProcessor<>();
 
-        final JWTProcessorConfiguration config = getConfiguration();
-
         final JWKSource<SecurityContext> jwkSource = new RemoteJWKSet<>(
-                new URL(config.getJWKSUrl()),
-                new DefaultResourceRetriever(config.getConnectTimeout(), config.getReadTimeout()));
+                new URL(configuration.getJWKSUrl()),
+                new DefaultResourceRetriever(
+                        configuration.getConnectTimeout(),
+                        configuration.getReadTimeout()));
 
         final JWSKeySelector<SecurityContext> keySelector = new JWSVerificationKeySelector<>(
-                config.getSigningAlgorithm(), jwkSource);
+                configuration.getSigningAlgorithm(), jwkSource);
 
         processor.setJWSKeySelector(keySelector);
-        processor.setJWTClaimsSetVerifier(new JWTClaimsVerifier(config));
+        processor.setJWTClaimsSetVerifier(new JWTClaimsVerifier(configuration));
     }
 
     @Override
@@ -52,6 +59,11 @@ public class DefaultJWTProcessor implements JWTProcessor {
             logger.debug("Failed to process incoming token:", e);
             return Optional.empty();
         }
+    }
+
+    @Override
+    public JWTProcessorConfiguration getConfiguration() {
+        return configuration;
     }
 
     private static class JWTClaimsVerifier extends DefaultJWTClaimsVerifier<SecurityContext> {
