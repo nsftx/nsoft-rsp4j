@@ -17,8 +17,8 @@
     <name>NSoft Security API - Spring</name>
 
     <properties>
-        <spring.web.version>5.2.2.RELEASE</spring.web.version>
-        <spring.context.version>5.2.2.RELEASE</spring.context.version>
+        <spring.web.version>5.2.3.RELEASE</spring.web.version>
+        <spring.context.version>5.2.3.RELEASE</spring.context.version>
         <spring.web.security.version>5.2.1.RELEASE</spring.web.security.version>
         <javax.servlet.version>4.0.1</javax.servlet.version>
         <zalando.version>0.25.2</zalando.version>
