@@ -3,6 +3,8 @@ package com.nsoft.api.security.test_support;
 import com.nsoft.api.security.jwt.verifier.AbstractJWTProcessorConfiguration;
 import com.nsoft.api.security.jwt.verifier.JWSAlgorithm;
 
+import java.util.Optional;
+
 public final class LocalProcessorConfiguration extends AbstractJWTProcessorConfiguration {
 
     @Override
@@ -11,8 +13,8 @@ public final class LocalProcessorConfiguration extends AbstractJWTProcessorConfi
     }
 
     @Override
-    public String getIssuer() {
-        return "http://localhost:8080";
+    public Optional<String> getIssuer() {
+        return Optional.of("http://localhost:8080");
     }
 
     @Override
