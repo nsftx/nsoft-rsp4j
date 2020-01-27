@@ -35,7 +35,11 @@ public class DefaultJWTProcessor implements JWTProcessor {
 
     public DefaultJWTProcessor(final JWTProcessorConfiguration configuration)
             throws MalformedURLException {
-        this.configuration = requireNonNull(configuration, "configuration must be provided");
+        this.configuration = requireNonNull(configuration, "configuration must not be null");
+
+        requireNonNull(this.configuration.getJWKSUrl(), "getJWKSUrl() must not return null");
+        requireNonNull(this.configuration.getSigningAlgorithm(),
+                "getSigningAlgorithm() must not return null");
 
         this.processor = new com.nimbusds.jwt.proc.DefaultJWTProcessor<>();
 
@@ -81,7 +85,11 @@ public class DefaultJWTProcessor implements JWTProcessor {
                 throws BadJWTException {
             super.verify(claimsSet, context);
 
-            if (!claimsSet.getIssuer().equals(configuration.getIssuer())) {
+            if (!configuration.getIssuer().isPresent()) {
+                return;
+            }
+
+            if (!claimsSet.getIssuer().equals(configuration.getIssuer().get())) {
                 throw new BadJWTException("Invalid token issuer");
             }
         }

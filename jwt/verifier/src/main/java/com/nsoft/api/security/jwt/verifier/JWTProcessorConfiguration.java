@@ -1,5 +1,7 @@
 package com.nsoft.api.security.jwt.verifier;
 
+import java.util.Optional;
+
 /**
  * A configuration object used by {@link JWTProcessor} during construction and token verification.
  * <p>
@@ -23,12 +25,14 @@ public interface JWTProcessorConfiguration {
     String getJWKSUrl();
 
     /**
-     * Returns the token issuer {@link String} that needs to match the issuer {@link String} in the
-     * token that is being processed.
+     * Returns an {@link Optional} instance which may contain the token issuer {@link String} that
+     * needs to match the issuer {@link String} in the token that is being processed.
      *
-     * @return required token issuer
+     * If the {@link Optional} instance is empty, issuer validations are ignored.
+     *
+     * @return {@link Optional}, can contain issuer string or be empty
      */
-    String getIssuer();
+    Optional<String> getIssuer();
 
     /**
      * Returns the {@link JWSAlgorithm} that needs to match the algorithm used to sign the token
