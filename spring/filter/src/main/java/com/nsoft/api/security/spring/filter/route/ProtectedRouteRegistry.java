@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 /**
@@ -38,14 +37,17 @@ import java.util.function.Supplier;
  * @see #registerRoutes(String...)
  * @see #registerRoutes(Collection)
  * @see #registerRoutes(Map)
- * @see #enableAutomaticTrailCompensation(boolean)
  * @since 2019-10-01
  */
 public final class ProtectedRouteRegistry {
 
-    private boolean automaticTrail = true;
+    private final boolean automaticTrail;
 
     final Set<AntPathRequestMatcher> protectedRoutes = new HashSet<>();
+
+    public ProtectedRouteRegistry(boolean automaticTrail) {
+        this.automaticTrail = automaticTrail;
+    }
 
     /**
      * Registers a route to be considered as protected by {@link com.nsoft.api.security.spring.filter.AbstractProtectedRouteFilter}
@@ -152,37 +154,6 @@ public final class ProtectedRouteRegistry {
         routes.forEach(this::registerRoute);
 
         return this;
-    }
-
-    /**
-     * When configuring a WebMvc application, if {@code PathMatchConfigurer#setUserTrailingSlashMatch}
-     * is enabled (enabled by default), incoming request are able to bypass the Auth filter by
-     * adding a trailing slash.
-     * <p>
-     * We want {@code /route} and {@code /route/} to produce same results when interacted upon with
-     * the same REST verb. This situation leads to users registering their routes two times (with
-     * and without trailing slash)
-     * <p>
-     * When {@code enableAutomaticTrailCompensation} is enabled, all registered routes will
-     * automatically receive a compensatory route to handle this scenario.
-     * <p>
-     * Automatic trail compensation is enabled by default.
-     *
-     * @param automaticTrail enable/disable trail compensation
-     */
-    public ProtectedRouteRegistry enableAutomaticTrailCompensation(boolean automaticTrail) {
-        this.automaticTrail = automaticTrail;
-
-        return this;
-    }
-
-    /**
-     * @see #enableAutomaticTrailCompensation(boolean)
-     */
-    public ProtectedRouteRegistry enableAutomaticTrailCompensation(final BooleanSupplier supplier) {
-        Objects.requireNonNull(supplier);
-
-        return enableAutomaticTrailCompensation(supplier.getAsBoolean());
     }
 
     private String createCompensatoryRoute(String route) {

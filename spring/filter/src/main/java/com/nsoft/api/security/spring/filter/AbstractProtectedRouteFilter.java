@@ -40,10 +40,18 @@ import java.io.IOException;
  */
 public abstract class AbstractProtectedRouteFilter extends GenericFilterBean {
 
-    private final ProtectedRouteRegistry protectedRouteRegistry = new ProtectedRouteRegistry();
     private ProtectedRouteHandler protectedRouteHandler;
 
     private ProtectedRouteFilterConfiguration configuration = new ProtectedRouteFilterConfiguration();
+
+    /**
+     * The implementor is expected to configure the filter inside this method. The configuration is
+     * done by invoking the setter methods inside {@link ProtectedRouteFilterConfiguration}.
+     *
+     * @param configuration {@link ProtectedRouteFilterConfiguration} instance used to configure the
+     * filter
+     */
+    protected abstract void configureFilter(final ProtectedRouteFilterConfiguration configuration);
 
     /**
      * The implementor is expected to register the routes they wish to protect inside this method.
@@ -55,21 +63,12 @@ public abstract class AbstractProtectedRouteFilter extends GenericFilterBean {
      */
     protected abstract void registerProtectedRoutes(final ProtectedRouteRegistry registry);
 
-    /**
-     * The implementor is expected to configure the filter inside this method. The configuration is
-     * done by invoking the setter methods inside {@link ProtectedRouteFilterConfiguration}.
-     *
-     * @param configuration {@link ProtectedRouteFilterConfiguration} instance used to configure the
-     * filter
-     */
-    protected abstract void configureFilter(final ProtectedRouteFilterConfiguration configuration);
-
     @Override
     public void initFilterBean() {
         configureFilter(configuration);
 
-        protectedRouteRegistry
-                .enableAutomaticTrailCompensation(configuration.isAutomaticTrailCompensation());
+        final ProtectedRouteRegistry protectedRouteRegistry = new ProtectedRouteRegistry(
+                configuration.isAutomaticTrailCompensation());
         registerProtectedRoutes(protectedRouteRegistry);
 
         if (configuration.getJwtProcessorConfiguration() != null
