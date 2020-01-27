@@ -1,5 +1,11 @@
 package com.nsoft.api.security.jwt.verifier;
 
+/**
+ * An enumerator containing algorithm name references that can be used to sign a JWT
+ *
+ * @author Mislav Milicevic
+ * @since 2020-01-27
+ */
 public enum JWSAlgorithm {
     HS256,
     HS384,
@@ -13,5 +19,5 @@ public enum JWSAlgorithm {
     PS256,
     PS384,
     PS512,
-    EdDSA;
+    EdDSA
 }
