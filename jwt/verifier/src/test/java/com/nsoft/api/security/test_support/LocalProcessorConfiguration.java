@@ -1,7 +1,7 @@
 package com.nsoft.api.security.test_support;
 
-import com.nimbusds.jose.JWSAlgorithm;
 import com.nsoft.api.security.jwt.verifier.AbstractJWTProcessorConfiguration;
+import com.nsoft.api.security.jwt.verifier.JWSAlgorithm;
 
 public final class LocalProcessorConfiguration extends AbstractJWTProcessorConfiguration {
 

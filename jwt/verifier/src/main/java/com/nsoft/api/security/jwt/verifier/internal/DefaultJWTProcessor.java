@@ -1,5 +1,6 @@
 package com.nsoft.api.security.jwt.verifier.internal;
 
+import static com.nsoft.api.security.jwt.verifier.internal.SigningAlgorithmTranslator.toNimbusAlgorithm;
 import static java.util.Objects.requireNonNull;
 
 import com.nimbusds.jose.JOSEException;
@@ -45,7 +46,7 @@ public class DefaultJWTProcessor implements JWTProcessor {
                         configuration.getReadTimeout()));
 
         final JWSKeySelector<SecurityContext> keySelector = new JWSVerificationKeySelector<>(
-                configuration.getSigningAlgorithm(), jwkSource);
+                toNimbusAlgorithm(configuration.getSigningAlgorithm()), jwkSource);
 
         processor.setJWSKeySelector(keySelector);
         processor.setJWTClaimsSetVerifier(new JWTClaimsVerifier(configuration));

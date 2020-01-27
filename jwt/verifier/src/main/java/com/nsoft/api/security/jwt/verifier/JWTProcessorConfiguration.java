@@ -1,7 +1,5 @@
 package com.nsoft.api.security.jwt.verifier;
 
-import com.nimbusds.jose.JWSAlgorithm;
-
 /**
  * A configuration object used by {@link JWTProcessor} during construction and token verification.
  * <p>
