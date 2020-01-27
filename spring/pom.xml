@@ -22,7 +22,6 @@
         <spring.web.security.version>5.2.1.RELEASE</spring.web.security.version>
         <javax.servlet.version>4.0.1</javax.servlet.version>
         <zalando.version>0.25.2</zalando.version>
-        <chiwava.version>2.0.0.RC1</chiwava.version>
     </properties>
 
     <modules>
