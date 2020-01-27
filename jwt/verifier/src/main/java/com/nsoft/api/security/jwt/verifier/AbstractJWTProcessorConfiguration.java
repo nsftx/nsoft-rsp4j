@@ -1,5 +1,12 @@
 package com.nsoft.api.security.jwt.verifier;
 
+/**
+ * An abstract {@link JWTProcessorConfiguration} implementation which contains some default values,
+ * such as default timeout durations.
+ *
+ * @author Mislav Milicevic
+ * @since 2020-01-23
+ */
 public abstract class AbstractJWTProcessorConfiguration implements JWTProcessorConfiguration {
 
     private static final int DEFAULT_CONNECT_TIMEOUT = 1000;
