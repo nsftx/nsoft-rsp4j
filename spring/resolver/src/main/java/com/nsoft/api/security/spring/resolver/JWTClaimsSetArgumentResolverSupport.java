@@ -25,7 +25,7 @@ public abstract class JWTClaimsSetArgumentResolverSupport {
      * This {@link JWTProcessor} is used to process incoming Bearer tokens and construct {@link
      * JWTClaimsSet} instances
      */
-    private JWTProcessor processor;
+    private final JWTProcessor processor;
 
     protected JWTClaimsSetArgumentResolverSupport(final JWTProcessor processor) {
         this.processor = requireNonNull(processor, "processor must not be null");
