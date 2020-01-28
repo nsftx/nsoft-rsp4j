@@ -22,12 +22,12 @@ public final class ProtectedRouteFilterConfiguration {
     private JWTProcessor jwtProcessor;
     private ErrorHandler errorHandler;
 
-    private boolean automaticTrailCompensation;
+    private boolean automaticTrailCompensation = true;
 
     ProtectedRouteFilterConfiguration() {
     }
 
-    protected JWTProcessorConfiguration getJwtProcessorConfiguration() {
+    protected JWTProcessorConfiguration getJWTProcessorConfiguration() {
         return jwtProcessorConfiguration;
     }
 
@@ -69,7 +69,7 @@ public final class ProtectedRouteFilterConfiguration {
         this.jwtProcessorConfiguration = supplier.get();
     }
 
-    protected JWTProcessor getJwtProcessor() {
+    protected JWTProcessor getJWTProcessor() {
         return jwtProcessor;
     }
 

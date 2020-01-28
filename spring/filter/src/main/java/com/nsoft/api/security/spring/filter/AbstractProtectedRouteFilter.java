@@ -71,15 +71,15 @@ public abstract class AbstractProtectedRouteFilter extends GenericFilterBean {
                 configuration.isAutomaticTrailCompensation());
         registerProtectedRoutes(protectedRouteRegistry);
 
-        if (configuration.getJwtProcessorConfiguration() != null
-                && configuration.getJwtProcessor() != null) {
+        if (configuration.getJWTProcessorConfiguration() != null
+                && configuration.getJWTProcessor() != null) {
             throw new InvalidFilterConfigurationException(
                     "Configuration conflict - can't set both JWTProcessor instance and configuration");
         }
 
-        final JWTProcessor processor = configuration.getJwtProcessor() == null
-                ? JWTProcessor.fromConfiguration(configuration.getJwtProcessorConfiguration())
-                : configuration.getJwtProcessor();
+        final JWTProcessor processor = configuration.getJWTProcessor() == null
+                ? JWTProcessor.fromConfiguration(configuration.getJWTProcessorConfiguration())
+                : configuration.getJWTProcessor();
 
         final ErrorHandler errorHandler = configuration.getErrorHandler() == null
                 ? ErrorHandler.getDefault()
