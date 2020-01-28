@@ -1,11 +1,13 @@
 package com.nsoft.api.security.spring.resolver;
 
+import static java.util.Objects.requireNonNull;
+
 import com.nsoft.api.security.jwt.verifier.JWTClaimsSet;
 import com.nsoft.api.security.jwt.verifier.JWTProcessor;
+import com.nsoft.api.security.jwt.verifier.JWTProcessorConfiguration;
 import com.nsoft.api.security.spring.resolver.internal.util.HeaderUtil;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Objects;
 
 /**
  * Support class which provides support for bearer token and {@link JWTClaimsSet} extraction.
@@ -23,7 +25,16 @@ public abstract class JWTClaimsSetArgumentResolverSupport {
      * This {@link JWTProcessor} is used to process incoming Bearer tokens and construct {@link
      * JWTClaimsSet} instances
      */
-    private JWTProcessor processor = JWTProcessor.getDefault();
+    private final JWTProcessor processor;
+
+    protected JWTClaimsSetArgumentResolverSupport(final JWTProcessor processor) {
+        this.processor = requireNonNull(processor, "processor must not be null");
+    }
+
+    protected JWTClaimsSetArgumentResolverSupport(final JWTProcessorConfiguration configuration) {
+        this.processor = JWTProcessor
+                .fromConfiguration(requireNonNull(configuration, "configuration must not be null"));
+    }
 
     /**
      * Extracts a bearer token from an incoming HTTP request
@@ -47,18 +58,4 @@ public abstract class JWTClaimsSetArgumentResolverSupport {
     protected JWTClaimsSet getClaimsSet(String bearerToken) throws Exception {
         return processor.process(bearerToken).orElseThrow(() -> CLAIMS_SET_EXCEPTION);
     }
-
-    /**
-     * Sets the {@link JWTProcessor} which will be used to process incoming Bearer tokens and
-     * construct {@link JWTClaimsSet} instances.
-     * <p>
-     * If the specified {@link JWTProcessor} is {@code null}, the processor gets set to the default
-     * implementation ({@link JWTProcessor#getDefault()})
-     *
-     * @param processor to use when processing incoming bearer tokens
-     */
-    public void setProcessor(JWTProcessor processor) {
-        this.processor = Objects.requireNonNullElse(processor, JWTProcessor.getDefault());
-    }
-
 }

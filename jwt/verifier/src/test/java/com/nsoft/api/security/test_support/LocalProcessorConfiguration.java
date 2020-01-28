@@ -1,9 +1,11 @@
 package com.nsoft.api.security.test_support;
 
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nsoft.api.security.jwt.verifier.JWTProcessorConfiguration;
+import com.nsoft.api.security.jwt.verifier.AbstractJWTProcessorConfiguration;
+import com.nsoft.api.security.jwt.verifier.JWSAlgorithm;
 
-final class LocalProcessorConfiguration implements JWTProcessorConfiguration {
+import java.util.Optional;
+
+public final class LocalProcessorConfiguration extends AbstractJWTProcessorConfiguration {
 
     @Override
     public String getJWKSUrl() {
@@ -11,8 +13,8 @@ final class LocalProcessorConfiguration implements JWTProcessorConfiguration {
     }
 
     @Override
-    public String getIssuer() {
-        return "http://localhost:8080";
+    public Optional<String> getIssuer() {
+        return Optional.of("http://localhost:8080");
     }
 
     @Override

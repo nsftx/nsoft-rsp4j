@@ -1,14 +1,15 @@
 package com.nsoft.api.security.spring.filter.route;
 
+import static java.util.Objects.requireNonNull;
+
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * A store for protected routes that are checked by {@link com.nsoft.api.security.spring.filter.AbstractProtectedRouteFilter}
@@ -38,23 +39,26 @@ import java.util.function.Supplier;
  * @see #registerRoutes(String...)
  * @see #registerRoutes(Collection)
  * @see #registerRoutes(Map)
- * @see #enableAutomaticTrailCompensation(boolean)
  * @since 2019-10-01
  */
 public final class ProtectedRouteRegistry {
 
-    private boolean automaticTrail = true;
+    private final boolean automaticTrail;
 
     final Set<AntPathRequestMatcher> protectedRoutes = new HashSet<>();
+
+    public ProtectedRouteRegistry(boolean automaticTrail) {
+        this.automaticTrail = automaticTrail;
+    }
 
     /**
      * Registers a route to be considered as protected by {@link com.nsoft.api.security.spring.filter.AbstractProtectedRouteFilter}
      *
-     * @param route to register, must not be null
+     * @param route to register, must not be {@code null}
      * @return current {@link ProtectedRouteRegistry} instance
      */
     public ProtectedRouteRegistry registerRoute(final String route) {
-        Objects.requireNonNull(route, "route can't be null");
+        requireNonNull(route, "route must not be null");
 
         protectedRoutes.add(new AntPathRequestMatcher(route));
 
@@ -73,7 +77,7 @@ public final class ProtectedRouteRegistry {
      * @return current {@link ProtectedRouteRegistry} instance
      */
     public ProtectedRouteRegistry registerRoute(final Supplier<String> routeSupplier) {
-        Objects.requireNonNull(routeSupplier, "routeSupplier can't be null");
+        requireNonNull(routeSupplier, "routeSupplier must not be null");
 
         return registerRoute(routeSupplier.get());
     }
@@ -82,15 +86,13 @@ public final class ProtectedRouteRegistry {
      * Registers multiple routes to be considered as protected by {@link
      * com.nsoft.api.security.spring.filter.AbstractProtectedRouteFilter}
      *
-     * @param routes to register, must not be null
+     * @param routes to register, must not be {@code null}
      * @return current {@link ProtectedRouteRegistry} instance
      */
     public ProtectedRouteRegistry registerRoutes(final String... routes) {
-        Objects.requireNonNull(routes, "routes can't be null");
+        requireNonNull(routes, "routes must not be null");
 
-        for (String route : routes) {
-            registerRoute(route);
-        }
+        Stream.of(routes).forEach(this::registerRoute);
 
         return this;
     }
@@ -99,11 +101,11 @@ public final class ProtectedRouteRegistry {
      * Registers multiple routes to be considered as protected by {@link
      * com.nsoft.api.security.spring.filter.AbstractProtectedRouteFilter}
      *
-     * @param routes to register, must not be null
+     * @param routes to register, must not be {@code null}
      * @return current {@link ProtectedRouteRegistry} instance
      */
     public ProtectedRouteRegistry registerRoutes(final Collection<String> routes) {
-        Objects.requireNonNull(routes, "routes can't be null");
+        requireNonNull(routes, "routes must not be null");
 
         routes.forEach(this::registerRoute);
 
@@ -116,19 +118,39 @@ public final class ProtectedRouteRegistry {
      * <p>
      * For a list of valid HTTP request methods, reference https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
      *
-     * @param route to register, must not be null
+     * @param route to register, must not be {@code null}
      * @param method delimiter, must be a valid HTTP request method (https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods)
      * @return current {@link ProtectedRouteRegistry} instance
      */
     public ProtectedRouteRegistry registerRoute(final String route, final String method) {
-        Objects.requireNonNull(route, "route can't be null");
-        Objects.requireNonNull(method, "method can't be null");
+        requireNonNull(route, "route must not be null");
+        requireNonNull(method, "method must not be null");
 
         protectedRoutes.add(new AntPathRequestMatcher(route, method));
 
         if (automaticTrail) {
             protectedRoutes.add(new AntPathRequestMatcher(createCompensatoryRoute(route), method));
         }
+
+        return this;
+    }
+
+    /**
+     * Registers a route to be considered as protected by {@link com.nsoft.api.security.spring.filter.AbstractProtectedRouteFilter}
+     * when the route is invoked through a specified HTTP request method.
+     * <p>
+     * For a list of valid HTTP request methods, reference https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
+     *
+     * @param route to register, must not be {@code null}
+     * @param methods set of method delimiters, must be a set of valid HTTP request methods
+     * (https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods)
+     * @return current {@link ProtectedRouteRegistry} instance
+     */
+    public ProtectedRouteRegistry registerRoute(final String route, final String... methods) {
+        requireNonNull(route, "route must not be null");
+        requireNonNull(route, "methods must not be null");
+
+        Stream.of(methods).forEach(method -> registerRoute(route, method));
 
         return this;
     }
@@ -143,50 +165,19 @@ public final class ProtectedRouteRegistry {
      * <p>
      * For a list of valid HTTP request methods, reference https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
      *
-     * @param routes to register, must not be null
+     * @param routes to register, must not be {@code null}
      * @return current {@link ProtectedRouteRegistry} instance
      */
     public ProtectedRouteRegistry registerRoutes(final Map<String, String> routes) {
-        Objects.requireNonNull(routes, "routes can't be null");
+        requireNonNull(routes, "routes must not be null");
 
         routes.forEach(this::registerRoute);
 
         return this;
     }
 
-    /**
-     * When configuring a WebMvc application, if {@code PathMatchConfigurer#setUserTrailingSlashMatch}
-     * is enabled (enabled by default), incoming request are able to bypass the Auth filter by
-     * adding a trailing slash.
-     * <p>
-     * We want {@code /route} and {@code /route/} to produce same results when interacted upon with
-     * the same REST verb. This situation leads to users registering their routes two times (with
-     * and without trailing slash)
-     * <p>
-     * When {@code enableAutomaticTrailCompensation} is enabled, all registered routes will
-     * automatically receive a compensatory route to handle this scenario.
-     * <p>
-     * Automatic trail compensation is enabled by default.
-     *
-     * @param automaticTrail enable/disable trail compensation
-     */
-    public ProtectedRouteRegistry enableAutomaticTrailCompensation(boolean automaticTrail) {
-        this.automaticTrail = automaticTrail;
-
-        return this;
-    }
-
-    /**
-     * @see #enableAutomaticTrailCompensation(boolean)
-     */
-    public ProtectedRouteRegistry enableAutomaticTrailCompensation(final BooleanSupplier supplier) {
-        Objects.requireNonNull(supplier);
-
-        return enableAutomaticTrailCompensation(supplier.getAsBoolean());
-    }
-
     private String createCompensatoryRoute(String route) {
-        Objects.requireNonNull(route, "route can't be null");
+        requireNonNull(route, "route must not be null");
 
         if (route.endsWith("/")) {
             route = route.substring(0, route.length() - 1);

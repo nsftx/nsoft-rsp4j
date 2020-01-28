@@ -1,5 +1,8 @@
 package com.nsoft.api.security.jwt.verifier.internal;
 
+import static com.nsoft.api.security.jwt.verifier.internal.SigningAlgorithmTranslator.toNimbusAlgorithm;
+import static java.util.Objects.requireNonNull;
+
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.jwk.source.RemoteJWKSet;
@@ -7,6 +10,7 @@ import com.nimbusds.jose.proc.BadJOSEException;
 import com.nimbusds.jose.proc.JWSKeySelector;
 import com.nimbusds.jose.proc.JWSVerificationKeySelector;
 import com.nimbusds.jose.proc.SecurityContext;
+import com.nimbusds.jose.util.DefaultResourceRetriever;
 import com.nimbusds.jwt.proc.BadJWTException;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
@@ -27,17 +31,29 @@ public class DefaultJWTProcessor implements JWTProcessor {
 
     private final ConfigurableJWTProcessor<SecurityContext> processor;
 
-    public DefaultJWTProcessor() throws MalformedURLException {
+    private final JWTProcessorConfiguration configuration;
+
+    public DefaultJWTProcessor(final JWTProcessorConfiguration configuration)
+            throws MalformedURLException {
+        this.configuration = requireNonNull(configuration, "configuration must not be null");
+
+        requireNonNull(this.configuration.getJWKSUrl(), "getJWKSUrl() must not return null");
+        requireNonNull(this.configuration.getSigningAlgorithm(),
+                "getSigningAlgorithm() must not return null");
+
         this.processor = new com.nimbusds.jwt.proc.DefaultJWTProcessor<>();
 
-        JWKSource<SecurityContext> jwkSource = new RemoteJWKSet<>(
-                new URL(getConfiguration().getJWKSUrl()));
+        final JWKSource<SecurityContext> jwkSource = new RemoteJWKSet<>(
+                new URL(configuration.getJWKSUrl()),
+                new DefaultResourceRetriever(
+                        configuration.getConnectTimeout(),
+                        configuration.getReadTimeout()));
 
-        JWSKeySelector<SecurityContext> keySelector = new JWSVerificationKeySelector<>(
-                getConfiguration().getSigningAlgorithm(), jwkSource);
+        final JWSKeySelector<SecurityContext> keySelector = new JWSVerificationKeySelector<>(
+                toNimbusAlgorithm(configuration.getSigningAlgorithm()), jwkSource);
 
         processor.setJWSKeySelector(keySelector);
-        processor.setJWTClaimsSetVerifier(new JWTClaimsVerifier(getConfiguration()));
+        processor.setJWTClaimsSetVerifier(new JWTClaimsVerifier(configuration));
     }
 
     @Override
@@ -50,6 +66,11 @@ public class DefaultJWTProcessor implements JWTProcessor {
         }
     }
 
+    @Override
+    public JWTProcessorConfiguration getConfiguration() {
+        return configuration;
+    }
+
     private static class JWTClaimsVerifier extends DefaultJWTClaimsVerifier<SecurityContext> {
 
         private final JWTProcessorConfiguration configuration;
@@ -60,10 +81,15 @@ public class DefaultJWTProcessor implements JWTProcessor {
         }
 
         @Override
-        public void verify(com.nimbusds.jwt.JWTClaimsSet claimsSet, SecurityContext context) throws BadJWTException {
+        public void verify(com.nimbusds.jwt.JWTClaimsSet claimsSet, SecurityContext context)
+                throws BadJWTException {
             super.verify(claimsSet, context);
 
-            if (!claimsSet.getIssuer().equals(configuration.getIssuer())) {
+            if (!configuration.getIssuer().isPresent()) {
+                return;
+            }
+
+            if (!claimsSet.getIssuer().equals(configuration.getIssuer().get())) {
                 throw new BadJWTException("Invalid token issuer");
             }
         }

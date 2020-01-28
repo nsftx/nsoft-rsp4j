@@ -1,8 +1,9 @@
 package com.nsoft.api.security.jwt.verifier;
 
+import static java.util.Objects.requireNonNull;
+
 import com.nsoft.api.security.jwt.verifier.exception.ProcessorInstantiationException;
 import com.nsoft.api.security.jwt.verifier.internal.DefaultJWTProcessor;
-import com.nsoft.api.security.jwt.verifier.internal.DefaultJWTProcessorConfiguration;
 
 import java.net.MalformedURLException;
 import java.util.Optional;
@@ -10,13 +11,10 @@ import java.util.function.Supplier;
 
 /**
  * A JSON Web Token processor abstraction used to process and verify OAuth2 access tokens.
- *
- * NSoft's security API directly integrates with Chameleon Accounts by providing an out-of-the-box
- * JWT processor which pulls and caches a JSON Web Key Set provided by the Chameleon team used for
- * token verification by the processor.
- *
- * To use the default processor designed for Chameleon Accounts, you can access it by invoking
- * {@link JWTProcessor#getDefault()} factory method.
+ * <p>
+ * A default {@link JWTProcessor} is provided and can be constructed and accessed by invoking {@link
+ * #fromConfiguration(JWTProcessorConfiguration)}. A {@link JWTProcessorConfiguration} instance is
+ * required to be passed to the method.
  *
  * @author Mislav Milicevic
  * @since 2019-10-01
@@ -28,7 +26,7 @@ public interface JWTProcessor {
      * Optional<JWTClaimsSet>} will be returned. Otherwise, an empty {@link Optional} will be
      * returned.
      *
-     * @param token OAuth2 access token
+     * @param token OAuth2 access token, must not be null {@code null}
      * @return {@link JWTClaimsSet} if token is verified successfully
      */
     Optional<JWTClaimsSet> process(String token);
@@ -38,11 +36,11 @@ public interface JWTProcessor {
      * Optional<JWTClaimsSet>} will be returned. Otherwise, an empty {@link Optional} will be
      * returned.
      *
-     * @param tokenSupplier OAuth2 access token supplier
+     * @param tokenSupplier OAuth2 access token supplier, must not be {@code null}
      * @return {@link JWTClaimsSet} if token is verified successfully
      */
     default Optional<JWTClaimsSet> process(Supplier<String> tokenSupplier) {
-        return process(tokenSupplier.get());
+        return process(requireNonNull(tokenSupplier).get());
     }
 
     /**
@@ -51,18 +49,17 @@ public interface JWTProcessor {
      *
      * @return configuration used by {@link JWTProcessor}
      */
-    default JWTProcessorConfiguration getConfiguration() {
-        return new DefaultJWTProcessorConfiguration();
-    }
+    JWTProcessorConfiguration getConfiguration();
 
     /**
-     * A factory method used to retrieve the default {@link JWTProcessor} implementation.
+     * A factory method used to construct a default {@link JWTProcessor} implementation from a
+     * {@link JWTProcessorConfiguration}.
      *
      * @return default {@link JWTProcessor} implementation
      */
-    static JWTProcessor getDefault() {
+    static JWTProcessor fromConfiguration(final JWTProcessorConfiguration configuration) {
         try {
-            return new DefaultJWTProcessor();
+            return new DefaultJWTProcessor(configuration);
         } catch (MalformedURLException e) {
             throw new ProcessorInstantiationException();
         }

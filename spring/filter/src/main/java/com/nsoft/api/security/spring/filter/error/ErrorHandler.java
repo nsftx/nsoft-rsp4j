@@ -1,7 +1,6 @@
 package com.nsoft.api.security.spring.filter.error;
 
 import com.nsoft.api.security.spring.filter.internal.error.DefaultErrorHandler;
-import com.nsoft.api.security.spring.filter.internal.error.FallbackErrorHandler;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,15 +18,25 @@ import javax.servlet.http.HttpServletResponse;
  */
 public interface ErrorHandler {
 
+    /**
+     * Called when an error caused by an invalid token occurs. Implementors should handle these
+     * errors by writing them to the {@link HttpServletResponse}. The error serialization format is
+     * not defined and is left to the user.
+     *
+     * @param response {@link HttpServletResponse} presented to the client
+     */
     void handleInvalidBearerTokenError(HttpServletResponse response);
 
+    /**
+     * Called when an error caused by JWT processing occurs. Implementors should handle these errors
+     * by writing them to the {@link HttpServletResponse}. The error serialization format is not
+     * defined and is left to the user.
+     *
+     * @param response {@link HttpServletResponse} presented to the client
+     */
     void handleJWTProcessingError(HttpServletResponse response);
 
     static ErrorHandler getDefault() {
         return new DefaultErrorHandler();
-    }
-
-    static ErrorHandler getFallback() {
-        return new FallbackErrorHandler();
     }
 }
