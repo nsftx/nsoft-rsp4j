@@ -202,12 +202,44 @@
         </dependencies>
     </dependencyManagement>
 
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <organization>
+        <name>NSoft</name>
+        <url>https://nsoft.com</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <name>Mislav Milicevic</name>
+            <url>https://github.com/dekmm</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/nsftx/nsoft-rsp4j.git</connection>
+        <developerConnection>scm:git:ssh://github.com:nsftx/nsoft-rsp4j.git</developerConnection>
+        <url>https://github.com/nsftx/nsoft-rsp4j</url>
+    </scm>
+
+    <issueManagement>
+        <system>Github</system>
+        <url>https://github.com/nsftx/rsp4j/issues</url>
+    </issueManagement>
+
     <distributionManagement>
+        <snapshotRepository>
+            <id>snapshot</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
         <repository>
-            <id>github</id>
-            <name>GitHub nsftx Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/nsftx/nsoft-rsp4j</url>
+            <id>staging</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
-
 </project>
