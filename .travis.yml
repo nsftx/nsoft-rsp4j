@@ -1,18 +1,6 @@
 language: java
-
-jdk:
-  - oraclejdk8
-  - oraclejdk9
-  - openjdk10
-  - openjdk11
-  - openjdk12
-  - openjdk13
-
-addons:
-  apt:
-    packages:
-      - oracle-java8-installer
-      - oracle-java9-installer
-
 dist: bionic
 sudo: false
+
+jdk:
+  - openjdk11
