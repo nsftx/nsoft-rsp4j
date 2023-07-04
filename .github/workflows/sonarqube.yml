@@ -1,0 +1,52 @@
+name: Nsoft SonarQube Analysis
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+jobs:
+  sonar_scan:
+    name: SonarQube scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: 11
+          distribution: zulu
+      - name: Cache SonarQube packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build and analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_GLOBAL_ANALYSIS_TOKEN }}
+          SONAR_HOST_URL: https://sonarqube.nsoft.io
+        run: if [ "$GITHUB_EVENT_NAME" = "push" ]; then mvn -B verify
+          org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+          -Dsonar.branch.name=${GITHUB_REF#refs/heads/} -Dsonar.java.binaries=.
+          -Dsonar.java.libraries=. -Dsonar.projectKey=nsoft-rsp4j; elif [
+          "$GITHUB_EVENT_NAME" = "pull_request" ]; then mvn -B verify
+          org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+          -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }}
+          -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}
+          -Dsonar.pullrequest.base=${{ github.event.pull_request.base.ref }}
+          -Dsonar.scm.revision=${{ github.event.pull_request.head.sha }}
+          -Dsonar.java.binaries=. -Dsonar.java.libraries=.
+          -Dsonar.projectKey=nsoft-rsp4j; fi
